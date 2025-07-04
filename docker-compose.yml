@@ -2,6 +2,9 @@ services:
   app:
     build:
       context: .
+      args:
+        UID: ${UID}
+        GID: ${GID}
       dockerfile: docker/php/Dockerfile
     container_name: laravel-app
     ports:
