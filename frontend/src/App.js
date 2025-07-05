@@ -2,9 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import Library from './pages/Library';
-import Tags from './pages/Tags';
+import TagsList from './pages/TagsList';
 import GameCreate from './pages/GameCreate';
 import GameEdit from './pages/GameEdit';
+import TagCreate from './pages/TagCreate';
+import TagEdit from './pages/TagEdit';
+import TagDelete from './pages/TagDelete';
 
 function App() {
   return (
@@ -19,7 +22,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/library" element={<Library />} />
-            <Route path="/tags" element={<Tags />} />
+            <Route path="/tags" element={<TagsList />} />
+            <Route path="/tags/create" element={<TagCreate />} />
+            <Route path="/tags/:id/edit" element={<TagEdit />} />
+            <Route path="/tags/:id/delete" element={<TagDelete />} />
             <Route path="/games/new" element={<GameCreate />} />
             <Route path="/games/:id/edit" element={<GameEdit />} />
           </Routes>
