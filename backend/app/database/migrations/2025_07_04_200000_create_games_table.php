@@ -15,6 +15,7 @@ return new class extends Migration
             $table->integer('player_min');
             $table->integer('player_max')->nullable();
             $table->integer('estimated_time')->nullable();
+            $table->integer('min_age')->nullable();
             $table->timestamps();
         });
     }

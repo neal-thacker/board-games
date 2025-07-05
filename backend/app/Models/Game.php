@@ -15,6 +15,7 @@ class Game extends Model
         'player_min',
         'player_max',
         'estimated_time',
+        'min_age',
     ];
 
     public function tags()

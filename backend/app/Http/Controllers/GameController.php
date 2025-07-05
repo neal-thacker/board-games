@@ -22,6 +22,7 @@ class GameController extends Controller
             'player_min' => 'required|integer|min:1',
             'player_max' => 'required|integer|min:1',
             'estimated_time' => 'required|integer|min:1',
+            'min_age' => 'nullable|integer|min:0',
         ]);
         return Game::create($validated);
     }
@@ -41,6 +42,7 @@ class GameController extends Controller
             'player_min' => 'sometimes|required|integer|min:1',
             'player_max' => 'sometimes|required|integer|min:1',
             'estimated_time' => 'sometimes|required|integer|min:1',
+            'min_age' => 'nullable|integer|min:0',
         ]);
         $game->update($validated);
         return $game;

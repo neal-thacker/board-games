@@ -17,6 +17,7 @@ class GameFactory extends Factory
             'player_min' => $this->faker->numberBetween(1, 2),
             'player_max' => $this->faker->numberBetween(3, 8),
             'estimated_time' => $this->faker->numberBetween(15, 180),
+            'min_age' => $this->faker->numberBetween(3, 18),
         ];
     }
 }
