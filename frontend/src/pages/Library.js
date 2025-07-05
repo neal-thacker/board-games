@@ -8,7 +8,7 @@ function Library() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/games')
+    fetch('http://localhost:8000/api/games')
       .then((res) => {
         console.log(res);
         if (!res.ok) throw new Error('Network response was not ok');
@@ -26,7 +26,7 @@ function Library() {
 
   const handleDelete = (id) => {
     if (!window.confirm('Are you sure you want to delete this game?')) return;
-    fetch(`http://localhost:8000/games/${id}`, { method: 'DELETE' })
+    fetch(`http://localhost:8000/api/games/${id}`, { method: 'DELETE' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to delete game');
         setGames((games) => games.filter((g) => g.id !== id));

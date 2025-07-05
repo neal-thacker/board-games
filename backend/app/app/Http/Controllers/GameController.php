@@ -10,7 +10,7 @@ class GameController extends Controller
     // Display a listing of the games
     public function index()
     {
-        return Game::all();
+        return response()->json(Game::all(), 200);
     }
 
     // Store a newly created game

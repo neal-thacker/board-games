@@ -6,7 +6,7 @@ export default function GameCreate() {
   const navigate = useNavigate();
 
   const handleCreate = (game) => {
-    fetch('http://localhost:8000/games', {
+    fetch('http://localhost:8000/api/games', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(game),

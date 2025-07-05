@@ -10,7 +10,7 @@ export default function GameEdit() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/games/${id}`)
+    fetch(`http://localhost:8000/api/games/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch game');
         return res.json();
@@ -26,7 +26,7 @@ export default function GameEdit() {
   }, [id]);
 
   const handleUpdate = (updated) => {
-    fetch(`http://localhost:8000/games/${id}`, {
+    fetch(`http://localhost:8000/api/games/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updated),
