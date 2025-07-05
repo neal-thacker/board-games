@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import Library from './pages/Library';
 import Tags from './pages/Tags';
+import GameCreate from './pages/GameCreate';
+import GameEdit from './pages/GameEdit';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/library" element={<Library />} />
             <Route path="/tags" element={<Tags />} />
+            <Route path="/games/new" element={<GameCreate />} />
+            <Route path="/games/:id/edit" element={<GameEdit />} />
           </Routes>
         </div>
         <footer className="w-full max-w-7xl mx-auto text-center py-6 text-gray-500 text-base bg-white mt-auto shadow-inner rounded-t-2xl border-t-2 border-purple-100">
