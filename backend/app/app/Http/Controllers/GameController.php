@@ -10,7 +10,7 @@ class GameController extends Controller
     // Display a listing of the games
     public function index()
     {
-        return response()->json(Game::all(), 200);
+        return response()->json(Game::with('tags')->get(), 200);
     }
 
     // Store a newly created game
@@ -24,13 +24,14 @@ class GameController extends Controller
             'estimated_time' => 'required|integer|min:1',
             'min_age' => 'nullable|integer|min:0',
         ]);
-        return Game::create($validated);
+        $game = Game::create($validated);
+        return Game::with('tags')->find($game->id);
     }
 
     // Display the specified game
     public function show(Game $game)
     {
-        return $game;
+        return $game->load('tags');
     }
 
     // Update the specified game
@@ -45,7 +46,7 @@ class GameController extends Controller
             'min_age' => 'nullable|integer|min:0',
         ]);
         $game->update($validated);
-        return $game;
+        return $game->load('tags');
     }
 
     // Remove the specified game

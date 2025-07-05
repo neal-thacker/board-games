@@ -6,16 +6,27 @@ export default function GameCreate() {
   const navigate = useNavigate();
 
   const handleCreate = (game) => {
+    // Separate tags from the rest of the game data
+    const { tags, ...gameData } = game;
     fetch('http://localhost:8000/api/games', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(game),
+      body: JSON.stringify(gameData),
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to create game');
         return res.json();
       })
-      .then(() => navigate('/library'))
+      .then(gameRes => {
+        // Attach tags after game is created
+        if (tags && tags.length > 0) {
+          Promise.all(tags.map(tag =>
+            fetch(`http://localhost:8000/api/games/${gameRes.id}/tags/${tag.id}`, { method: 'POST' })
+          )).then(() => navigate('/library'));
+        } else {
+          navigate('/library');
+        }
+      })
       .catch(err => alert(err.message));
   };
 

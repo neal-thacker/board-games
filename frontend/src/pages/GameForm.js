@@ -7,7 +7,35 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
   const [playerMax, setPlayerMax] = useState(initialData.player_max || '');
   const [estimatedTime, setEstimatedTime] = useState(initialData.estimated_time || '');
   const [minAge, setMinAge] = useState(initialData.min_age || '');
+  const [tags, setTags] = useState(initialData.tags || []);
+  const [tagQuery, setTagQuery] = useState('');
+  const [tagOptions, setTagOptions] = useState([]);
+  const [tagSearchLoading, setTagSearchLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (tagQuery.trim() === '') {
+      setTagOptions([]);
+      return;
+    }
+    setTagSearchLoading(true);
+    fetch(`http://localhost:8000/api/tags?search=${encodeURIComponent(tagQuery)}`)
+      .then(res => res.json())
+      .then(data => {
+        setTagOptions(data.filter(tag => !tags.some(t => t.id === tag.id)));
+        setTagSearchLoading(false);
+      });
+  }, [tagQuery, tags]);
+
+  const handleAddTag = (tag) => {
+    setTags([...tags, tag]);
+    setTagQuery('');
+    setTagOptions([]);
+  };
+
+  const handleRemoveTag = (tagId) => {
+    setTags(tags.filter(t => t.id !== tagId));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -27,6 +55,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
       player_max: playerMax ? parseInt(playerMax) : null,
       estimated_time: estimatedTime ? parseInt(estimatedTime) : null,
       min_age: minAge ? parseInt(minAge) : null,
+      tags,
     });
   };
 
@@ -89,6 +118,36 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
           value={minAge}
           onChange={e => setMinAge(e.target.value)}
         />
+      </div>
+      <div>
+        <label className="block font-semibold mb-1">Tags</label>
+        <div className="flex flex-wrap gap-2 mb-2">
+          {tags.map(tag => (
+            <span key={tag.id} className="inline-flex items-center bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-sm">
+              {tag.name}
+              <button type="button" className="ml-1 text-xs text-red-500 hover:text-red-700" onClick={() => handleRemoveTag(tag.id)}>&times;</button>
+            </span>
+          ))}
+        </div>
+        <input
+          type="text"
+          className="w-full border rounded px-3 py-2"
+          placeholder="Search tags..."
+          value={tagQuery}
+          onChange={e => setTagQuery(e.target.value)}
+        />
+        {tagSearchLoading && <div className="text-xs text-gray-500">Searching...</div>}
+        {tagOptions.length > 0 && (
+          <ul className="border rounded bg-white mt-1 max-h-40 overflow-y-auto">
+            {tagOptions.map(tag => (
+              <li key={tag.id}>
+                <button type="button" className="w-full text-left px-3 py-2 hover:bg-purple-100" onClick={() => handleAddTag(tag)}>
+                  {tag.name}
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       {error && <div className="text-red-500">{error}</div>}
       <div className="flex gap-4 justify-end">

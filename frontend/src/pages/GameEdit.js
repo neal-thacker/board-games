@@ -16,7 +16,8 @@ export default function GameEdit() {
         return res.json();
       })
       .then(data => {
-        setGame(data);
+        // Ensure tags is always an array of {id, name}
+        setGame({ ...data, tags: Array.isArray(data.tags) ? data.tags : [] });
         setLoading(false);
       })
       .catch(err => {
@@ -26,16 +27,33 @@ export default function GameEdit() {
   }, [id]);
 
   const handleUpdate = (updated) => {
+    // Separate tags from the rest of the game data
+    const { tags, ...gameData } = updated;
     fetch(`http://localhost:8000/api/games/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(updated),
+      body: JSON.stringify(gameData),
     })
       .then(res => {
         if (!res.ok) throw new Error('Failed to update game');
         return res.json();
       })
-      .then(() => navigate('/library'))
+      .then(gameRes => {
+        // Update tags via attach/detach endpoints
+        const tagIds = tags.map(t => t.id);
+        // 1. Detach all existing tags
+        const detachAll = (gameRes.tags || []).filter(t => !tagIds.includes(t.id));
+        const attachAll = tagIds.filter(id => !(gameRes.tags || []).some(t => t.id === id));
+        // Detach removed tags
+        Promise.all(detachAll.map(tag =>
+          fetch(`http://localhost:8000/api/games/${id}/tags/${tag.id}`, { method: 'DELETE' })
+        )).then(() => {
+          // Attach new tags
+          Promise.all(attachAll.map(tagId =>
+            fetch(`http://localhost:8000/api/games/${id}/tags/${tagId}`, { method: 'POST' })
+          )).then(() => navigate('/library'));
+        });
+      })
       .catch(err => setError(err.message));
   };
 
