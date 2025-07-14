@@ -36,7 +36,7 @@ function Library() {
   };
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center text-center px-4 w-full max-w-7xl mx-auto space-y-8 md:space-y-12">
+    <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12">
       <div className="flex w-full justify-between items-center mb-4">
         <h2 className="text-3xl font-bold text-purple-700">Library</h2>
         <button
