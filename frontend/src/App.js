@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HiMenu, HiHome, HiCollection, HiTag, HiX } from "react-icons/hi";
 import Home from './pages/Home';
 import Library from './pages/Library';
 import TagsList from './pages/TagsList';
@@ -10,28 +11,71 @@ import TagEdit from './pages/TagEdit';
 import TagDelete from './pages/TagDelete';
 
 function App() {
+  const [navOpen, setNavOpen] = useState(false);
+
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100 flex flex-col">
-        <nav className="w-full max-w-7xl mx-auto flex justify-center gap-12 py-4 bg-white shadow-md rounded-b-2xl border-b-2 border-purple-100 mb-4">
-          <Link to="/" className="font-semibold text-purple-700 hover:underline">Home</Link>
-          <Link to="/library" className="font-semibold text-purple-700 hover:underline">Library</Link>
-          <Link to="/tags" className="font-semibold text-purple-700 hover:underline">Tags</Link>
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* Header with hamburger for mobile */}
+        <nav className="w-full flex justify-between items-center py-4 bg-white shadow-md border-b-2 border-purple-600 px-2 sm:px-4 relative z-20">
+          <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
+            <span className="hidden sm:inline">Family Board Games</span>
+          </div>
+          {/* Hamburger icon for mobile */}
+          <button
+            className="sm:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+            aria-label="Open navigation menu"
+            onClick={() => setNavOpen(!navOpen)}
+          >
+            {navOpen ? <HiX className="w-7 h-7 text-purple-700" /> : <HiMenu className="w-7 h-7 text-purple-700" />}
+          </button>
+          {/* Desktop nav */}
+          <div className="hidden sm:flex gap-8">
+            <Link to="/" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
+              <HiHome className="w-5 h-5 mr-2" /> Home
+            </Link>
+            <Link to="/library" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
+              <HiCollection className="w-5 h-5 mr-2" /> Library
+            </Link>
+            <Link to="/tags" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
+              <HiTag className="w-5 h-5 mr-2" /> Tags
+            </Link>
+          </div>
+          {/* Floating mobile nav */}
+          {navOpen && (
+            <div className="absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30 sm:hidden">
+              <Link to="/" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3 border-b border-purple-100">
+                <HiHome className="w-5 h-5 mr-2" /> Home
+              </Link>
+              <Link to="/library" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3 border-b border-purple-100">
+                <HiCollection className="w-5 h-5 mr-2" /> Library
+              </Link>
+              <Link to="/tags" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3">
+                <HiTag className="w-5 h-5 mr-2" /> Tags
+              </Link>
+            </div>
+          )}
         </nav>
-        <div className="flex-1 w-full flex flex-col">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/tags" element={<TagsList />} />
-            <Route path="/tags/create" element={<TagCreate />} />
-            <Route path="/tags/:id/edit" element={<TagEdit />} />
-            <Route path="/tags/:id/delete" element={<TagDelete />} />
-            <Route path="/games/new" element={<GameCreate />} />
-            <Route path="/games/:id/edit" element={<GameEdit />} />
-          </Routes>
-        </div>
-        <footer className="w-full max-w-7xl mx-auto text-center py-6 text-gray-500 text-base bg-white mt-auto shadow-inner rounded-t-2xl border-t-2 border-purple-100">
-          <span className="font-semibold">© {new Date().getFullYear()} Family Board Games.</span> <span className="italic">All rights reserved.</span>
+        {/* Main content centered and max width, responsive */}
+        <main className="flex-1 w-full flex flex-col items-center max-w-7xl mx-auto bg-gray-50 px-2 sm:px-6">
+          <div className="w-full max-w-4xl flex flex-col py-4 sm:py-6">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/library" element={<Library />} />
+              <Route path="/tags" element={<TagsList />} />
+              <Route path="/tags/create" element={<TagCreate />} />
+              <Route path="/tags/:id/edit" element={<TagEdit />} />
+              <Route path="/tags/:id/delete" element={<TagDelete />} />
+              <Route path="/games/new" element={<GameCreate />} />
+              <Route path="/games/:id/edit" element={<GameEdit />} />
+            </Routes>
+          </div>
+        </main>
+        {/* Footer spans full width, responsive */}
+        <footer className="w-full flex justify-center bg-white mt-auto shadow-inner border-t-2 border-purple-600 px-2 sm:px-4">
+          <div className="w-full max-w-7xl text-center py-4 sm:py-6 text-gray-500 text-sm sm:text-base">
+            <span className="font-semibold">© {new Date().getFullYear()} Family Board Games.</span> <span className="italic">All rights reserved.</span>
+          </div>
         </footer>
       </div>
     </Router>
