@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import GameCard from './GameCard';
 
 function Library() {
   const [games, setGames] = useState([]);
@@ -49,31 +50,18 @@ function Library() {
       {loading && <p>Loading games...</p>}
       {error && <p className="text-red-500">Error: {error}</p>}
       {!loading && !error && (
-        <ul className="space-y-2 w-full max-w-2xl mx-auto">
+        <div className="flex flex-wrap gap-6 w-full max-w-5xl mx-auto justify-center">
           {games.length === 0 ? (
-            <li>No games found.</li>
+            <div className="text-gray-500">No games found.</div>
           ) : (
             games.map((game, idx) => (
-              <li key={game.id || idx} className="bg-gray-100 rounded p-2 flex justify-between items-center">
-                <span>{game.name || JSON.stringify(game)}</span>
-                <div className="flex gap-2">
-                  <button
-                    className="px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
-                    onClick={() => navigate(`/games/${game.id}/edit`)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-                    onClick={() => handleDelete(game.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </li>
+              <GameCard
+                key={game.id || idx}
+                game={{ ...game, onDelete: handleDelete }}
+              />
             ))
           )}
-        </ul>
+        </div>
       )}
     </main>
   );
