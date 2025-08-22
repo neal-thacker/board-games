@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../api';
 
 function TagDelete() {
   const { id } = useParams();
@@ -9,7 +10,7 @@ function TagDelete() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/tags/${id}`)
+    apiFetch(`/tags/${id}`)
       .then(res => res.json())
       .then(data => {
         setTag(data);
@@ -20,7 +21,7 @@ function TagDelete() {
   const handleDelete = async () => {
     setError(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/tags/${id}`, {
+      const res = await apiFetch(`/tags/${id}`, {
         method: 'DELETE',
       });
       if (!res.ok) {

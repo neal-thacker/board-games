@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../api';
 import { useParams, useNavigate } from 'react-router-dom';
 import GameForm from './GameForm';
 
@@ -10,7 +11,7 @@ export default function GameEdit() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/games/${id}`)
+    apiFetch(`/games/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to fetch game');
         return res.json();
@@ -29,7 +30,7 @@ export default function GameEdit() {
   const handleUpdate = (updated) => {
     // Separate tags from the rest of the game data
     const { tags, ...gameData } = updated;
-    fetch(`http://localhost:8000/api/games/${id}`, {
+    apiFetch(`/games/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gameData),
@@ -46,11 +47,11 @@ export default function GameEdit() {
         const attachAll = tagIds.filter(id => !(gameRes.tags || []).some(t => t.id === id));
         // Detach removed tags
         Promise.all(detachAll.map(tag =>
-          fetch(`http://localhost:8000/api/games/${id}/tags/${tag.id}`, { method: 'DELETE' })
+          apiFetch(`/games/${id}/tags/${tag.id}`, { method: 'DELETE' })
         )).then(() => {
           // Attach new tags
           Promise.all(attachAll.map(tagId =>
-            fetch(`http://localhost:8000/api/games/${id}/tags/${tagId}`, { method: 'POST' })
+            apiFetch(`/games/${id}/tags/${tagId}`, { method: 'POST' })
           )).then(() => navigate('/library'));
         });
       })

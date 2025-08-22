@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../api';
 import { Link } from 'react-router-dom';
 
 function TagsList() {
@@ -6,7 +7,7 @@ function TagsList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/tags')
+    apiFetch('/tags')
       .then(res => res.json())
       .then(data => {
         setTags(data);

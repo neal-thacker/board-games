@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
 
 function TagCreate() {
@@ -10,7 +11,7 @@ function TagCreate() {
     e.preventDefault();
     setError(null);
     try {
-      const res = await fetch('http://localhost:8000/api/tags', {
+      const res = await apiFetch('/tags', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),

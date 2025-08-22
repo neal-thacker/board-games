@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
 import GameCard from './GameCard';
 
@@ -9,7 +10,7 @@ function Library() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/games')
+    apiFetch('/games')
       .then((res) => {
         console.log(res);
         if (!res.ok) throw new Error('Network response was not ok');
@@ -27,7 +28,7 @@ function Library() {
 
   const handleDelete = (id) => {
     if (!window.confirm('Are you sure you want to delete this game?')) return;
-    fetch(`http://localhost:8000/api/games/${id}`, { method: 'DELETE' })
+    apiFetch(`/games/${id}`, { method: 'DELETE' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to delete game');
         setGames((games) => games.filter((g) => g.id !== id));

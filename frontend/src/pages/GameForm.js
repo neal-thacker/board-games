@@ -19,7 +19,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
       return;
     }
     setTagSearchLoading(true);
-    fetch(`http://localhost:8000/api/tags?search=${encodeURIComponent(tagQuery)}`)
+    apiFetch(`/tags?search=${encodeURIComponent(tagQuery)}`)
       .then(res => res.json())
       .then(data => {
         setTagOptions(data.filter(tag => !tags.some(t => t.id === tag.id)));

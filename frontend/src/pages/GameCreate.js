@@ -8,7 +8,7 @@ export default function GameCreate() {
   const handleCreate = (game) => {
     // Separate tags from the rest of the game data
     const { tags, ...gameData } = game;
-    fetch('http://localhost:8000/api/games', {
+    apiFetch('/games', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gameData),
@@ -21,7 +21,7 @@ export default function GameCreate() {
         // Attach tags after game is created
         if (tags && tags.length > 0) {
           Promise.all(tags.map(tag =>
-            fetch(`http://localhost:8000/api/games/${gameRes.id}/tags/${tag.id}`, { method: 'POST' })
+            apiFetch(`/games/${gameRes.id}/tags/${tag.id}`, { method: 'POST' })
           )).then(() => navigate('/library'));
         } else {
           navigate('/library');

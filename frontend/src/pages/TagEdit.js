@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { apiFetch } from '../api';
 import { useParams, useNavigate } from 'react-router-dom';
 
 function TagEdit() {
@@ -9,7 +10,7 @@ function TagEdit() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:8000/api/tags/${id}`)
+    apiFetch(`/tags/${id}`)
       .then(res => res.json())
       .then(data => {
         setName(data.name);
@@ -21,7 +22,7 @@ function TagEdit() {
     e.preventDefault();
     setError(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/tags/${id}`, {
+      const res = await apiFetch(`/tags/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
