@@ -1,10 +1,15 @@
 FROM php:8.3-fpm
 
+
+# Set default UID and GID if not provided
 ARG UID=1000
 ARG GID=1000
+ENV UID=${UID}
+ENV GID=${GID}
 
-RUN addgroup --gid $GID appgroup \
- && adduser --disabled-password --gecos "" --uid $UID --gid $GID appuser
+# Use default values if variables are empty
+RUN addgroup --gid ${GID:-1000} appgroup \
+ && adduser --disabled-password --gecos "" --uid ${UID:-1000} --gid ${GID:-1000} appuser
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
