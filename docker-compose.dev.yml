@@ -1,0 +1,42 @@
+services:
+  app:
+    build:
+      context: .
+      args:
+        UID: ${UID}
+        GID: ${GID}
+      dockerfile: docker/php/Dockerfile
+    container_name: laravel-app
+    ports:
+      - 8000:8000
+    volumes:
+      - ./backend/app:/var/www
+    depends_on:
+      - db
+    working_dir: /var/www
+    command: >
+      sh -c "composer install &&
+          php artisan serve --host=0.0.0.0 --port=8000"
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: root
+      DB_PASSWORD: secret
+    restart: on-failure
+
+  db:
+    image: mysql:8
+    container_name: laravel-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: secret
+    ports:
+      - 3306:3306
+    volumes:
+      - dbdata:/var/lib/mysql
+
+volumes:
+  dbdata:

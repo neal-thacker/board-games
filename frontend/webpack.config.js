@@ -52,8 +52,8 @@ module.exports = {
       template: path.resolve(__dirname, 'public', 'index.html'),
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
-      'process.env': JSON.stringify(process.env)
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api')
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
@@ -64,10 +64,18 @@ module.exports = {
     static: {
       directory: path.join(__dirname, 'public'),
     },
-    port: 3000,
+    port: 3001,
     hot: true,
     open: true,
     historyApiFallback: true,
+    proxy: [
+      {
+        context: ['/api'],
+        target: 'http://localhost:8000',
+        changeOrigin: true,
+        secure: false,
+      }
+    ],
   },
   mode: 'development',
 };
