@@ -9,6 +9,9 @@ module.exports = {
     filename: 'main.js',
     clean: true,
   },
+  experiments: {
+    topLevelAwait: true
+  },
   module: {
     rules: [
       {
@@ -28,7 +31,10 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.mjs'],
+    alias: {
+      "process/browser": require.resolve("process/browser")
+    },
     fallback: {
       "process": require.resolve("process/browser"),
       "buffer": require.resolve("buffer"),
@@ -38,14 +44,16 @@ module.exports = {
       "fs": false,
       "path": false,
       "os": false
-    }
+    },
+    fullySpecified: false
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
+      'process.env': JSON.stringify(process.env)
     }),
     new webpack.ProvidePlugin({
       process: 'process/browser',
