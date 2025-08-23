@@ -21,16 +21,16 @@ function App() {
           <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
             <span className="hidden sm:inline">Family Board Games</span>
           </div>
-          {/* Hamburger icon for mobile */}
+          {/* Hamburger icon for mobile only */}
           <button
-            className="sm:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
             aria-label="Open navigation menu"
             onClick={() => setNavOpen(!navOpen)}
           >
             {navOpen ? <HiX className="w-7 h-7 text-purple-700" /> : <HiMenu className="w-7 h-7 text-purple-700" />}
           </button>
-          {/* Desktop nav */}
-          <div className="hidden sm:flex gap-8">
+          {/* Desktop nav - visible on medium screens and up */}
+          <div className="hidden md:flex gap-8">
             <Link to="/" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
               <HiHome className="w-5 h-5 mr-2" /> Home
             </Link>
@@ -41,9 +41,9 @@ function App() {
               <HiTag className="w-5 h-5 mr-2" /> Tags
             </Link>
           </div>
-          {/* Floating mobile nav */}
+          {/* Floating mobile nav - only show on mobile */}
           {navOpen && (
-            <div className="absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30 sm:hidden">
+            <div className="absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30 md:hidden">
               <Link to="/" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3 border-b border-purple-100">
                 <HiHome className="w-5 h-5 mr-2" /> Home
               </Link>
