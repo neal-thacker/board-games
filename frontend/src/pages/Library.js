@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
-import { Modal } from 'flowbite-react';
+import { Modal, ModalBody, ModalHeader, ModalFooter } from 'flowbite-react';
 import GameCard from './GameCard';
 
 function Library() {
@@ -260,10 +260,10 @@ function Library() {
 
       {/* Filter Modal */}
       <Modal show={showFilterModal} onClose={cancelFilters} size="lg">
-        <Modal.Header>
+        <ModalHeader>
           Filter Games
-        </Modal.Header>
-        <Modal.Body>
+        </ModalHeader>
+        <ModalBody>
           <div className="space-y-4">
             {/* Tags Section */}
             <div>
@@ -292,8 +292,8 @@ function Library() {
               )}
             </div>
           </div>
-        </Modal.Body>
-        <Modal.Footer>
+        </ModalBody>
+        <ModalFooter>
           <div className="flex items-center justify-between w-full">
             <button
               onClick={() => setTempSelectedTagIds([])}
@@ -316,7 +316,7 @@ function Library() {
               </button>
             </div>
           </div>
-        </Modal.Footer>
+        </ModalFooter>
       </Modal>
 
       <p className="text-lg text-gray-700">Browse all available board games here.</p>
