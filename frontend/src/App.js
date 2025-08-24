@@ -16,30 +16,17 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white flex flex-col">
-        {/* Header with hamburger for mobile */}
         <nav className="w-full flex justify-between items-center py-4 bg-white shadow-md border-b-2 border-purple-600 px-2 sm:px-4 relative z-20">
           <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
             <span className="hidden sm:inline">Family Board Games</span>
           </div>
-          {/* Hamburger icon for mobile only */}
           <button
-            className="md:hidden p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
             aria-label="Open navigation menu"
             onClick={() => setNavOpen(!navOpen)}
           >
             {navOpen ? <HiX className="w-7 h-7 text-purple-700" /> : <HiMenu className="w-7 h-7 text-purple-700" />}
           </button>
-          <div className="sm:hidden md:flex gap-8 justify-center items-center flex-1">
-            <Link to="/" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
-              <HiHome className="w-5 h-5 mr-2" /> Home
-            </Link>
-            <Link to="/library" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
-              <HiCollection className="w-5 h-5 mr-2" /> Library
-            </Link>
-            <Link to="/tags" className="flex items-center font-semibold text-purple-700 hover:underline px-3 py-2 rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-purple-400">
-              <HiTag className="w-5 h-5 mr-2" /> Tags
-            </Link>
-          </div>
           {navOpen && (
             <div className="absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30 md:hidden">
               <Link to="/" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3 border-b border-purple-100">
