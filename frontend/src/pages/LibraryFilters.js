@@ -7,16 +7,20 @@ function LibraryFilters({
   onSearchChange,
   selectedTagIds,
   playerCount,
+  minAge,
   onFiltersChange,
   onClearFilters
 }) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [tempSelectedTagIds, setTempSelectedTagIds] = useState([]);
   const [tempPlayerCount, setTempPlayerCount] = useState(null);
+  const [tempMinAge, setTempMinAge] = useState(null);
   const [availableTags, setAvailableTags] = useState([]);
   const [loadingTags, setLoadingTags] = useState(true);
   const [playerStats, setPlayerStats] = useState({ min_players: 1, max_players: 10, suggested_default: 4 });
   const [loadingPlayerStats, setLoadingPlayerStats] = useState(true);
+  const [ageStats, setAgeStats] = useState({ min_age: 1, max_age: 18, suggested_default: 8 });
+  const [loadingAgeStats, setLoadingAgeStats] = useState(true);
 
   // Load available tags
   useEffect(() => {
@@ -36,6 +40,25 @@ function LibraryFilters({
     };
     
     loadTags();
+  }, []);
+
+  // Load age statistics
+  useEffect(() => {
+    const loadAgeStats = async () => {
+      try {
+        setLoadingAgeStats(true);
+        const res = await apiFetch('/games-age-stats');
+        if (!res.ok) throw new Error('Failed to load age stats');
+        const stats = await res.json();
+        setAgeStats(stats);
+      } catch (err) {
+        console.error('Error loading age stats:', err);
+      } finally {
+        setLoadingAgeStats(false);
+      }
+    };
+    
+    loadAgeStats();
   }, []);
 
   // Load player count statistics
@@ -73,7 +96,8 @@ function LibraryFilters({
   const applyFilters = () => {
     onFiltersChange({
       selectedTagIds: tempSelectedTagIds,
-      playerCount: tempPlayerCount
+      playerCount: tempPlayerCount,
+      minAge: tempMinAge
     });
     setShowFilterModal(false);
   };
@@ -82,6 +106,7 @@ function LibraryFilters({
   const cancelFilters = () => {
     setTempSelectedTagIds(selectedTagIds);
     setTempPlayerCount(playerCount);
+    setTempMinAge(minAge);
     setShowFilterModal(false);
   };
 
@@ -89,6 +114,7 @@ function LibraryFilters({
   const openFilterModal = () => {
     setTempSelectedTagIds(selectedTagIds);
     setTempPlayerCount(playerCount);
+    setTempMinAge(minAge);
     setShowFilterModal(true);
   };
 
@@ -97,7 +123,8 @@ function LibraryFilters({
     const newTagIds = Array.isArray(selectedTagIds) ? selectedTagIds.filter(id => id !== tagId) : [];
     onFiltersChange({
       selectedTagIds: newTagIds,
-      playerCount
+      playerCount,
+      minAge
     });
   };
 
@@ -105,12 +132,22 @@ function LibraryFilters({
   const removePlayerCountFilter = () => {
     onFiltersChange({
       selectedTagIds,
-      playerCount: null
+      playerCount: null,
+      minAge
+    });
+  };
+
+  // Remove minimum age filter
+  const removeMinAgeFilter = () => {
+    onFiltersChange({
+      selectedTagIds,
+      playerCount,
+      minAge: null
     });
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null;
+  const hasActiveFilters = searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null;
 
   return (
     <div className="w-full max-w-4xl space-y-4">
@@ -141,14 +178,14 @@ function LibraryFilters({
           {/* Filter Button */}
           <Button
             onClick={openFilterModal}
-            color={(Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null ? 'purple' : 'light'}
+            color={(Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null ? 'purple' : 'light'}
             className="flex items-center gap-2"
           >
             <span>🔍</span>
             Filters
-            {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null) && (
+            {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null) && (
               <Badge color="purple" size="sm">
-                {(Array.isArray(selectedTagIds) ? selectedTagIds.length : 0) + (playerCount !== null ? 1 : 0)}
+                {(Array.isArray(selectedTagIds) ? selectedTagIds.length : 0) + (playerCount !== null ? 1 : 0) + (minAge !== null ? 1 : 0)}
               </Badge>
             )}
           </Button>
@@ -166,7 +203,7 @@ function LibraryFilters({
       </div>
 
       {/* Active Filters Display */}
-      {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null) && (
+      {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null) && (
         <div className="flex flex-wrap gap-2 justify-center">
           {/* Tag filters */}
           {Array.isArray(selectedTagIds) && selectedTagIds.map(tagId => {
@@ -198,6 +235,22 @@ function LibraryFilters({
               <button
                 onClick={removePlayerCountFilter}
                 className="ml-1 text-blue-600 hover:text-blue-800"
+              >
+                ✕
+              </button>
+            </Badge>
+          )}
+
+          {/* Minimum age filter */}
+          {minAge !== null && (
+            <Badge
+              color="yellow"
+              className="flex items-center gap-1"
+            >
+              Age {minAge}+
+              <button
+                onClick={removeMinAgeFilter}
+                className="ml-1 text-yellow-600 hover:text-yellow-800"
               >
                 ✕
               </button>
@@ -281,6 +334,74 @@ function LibraryFilters({
               )}
             </div>
 
+            {/* Minimum Age Section */}
+            <div>
+              <h4 className="font-medium text-gray-700 mb-3">Minimum Age:</h4>
+              {loadingAgeStats ? (
+                <p className="text-gray-500">Loading age range...</p>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>Any age</span>
+                    <span>{tempMinAge !== null ? `Age ${tempMinAge}+` : 'No filter'}</span>
+                  </div>
+                  
+                  {/* Minimum Age Slider */}
+                  <div className="relative">
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="enable-age-filter"
+                          checked={tempMinAge !== null}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTempMinAge(ageStats.suggested_default || Math.ceil((ageStats.min_age + ageStats.max_age) / 2));
+                            } else {
+                              setTempMinAge(null);
+                            }
+                          }}
+                          className="rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                        />
+                        <label htmlFor="enable-age-filter" className="text-sm text-gray-700">
+                          Filter by minimum age
+                        </label>
+                      </div>
+                      
+                      {tempMinAge !== null && (
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-2">
+                            Show games suitable for ages {tempMinAge} and up
+                          </label>
+                          <input
+                            type="range"
+                            min={ageStats.min_age}
+                            max={ageStats.max_age}
+                            value={tempMinAge}
+                            onChange={(e) => setTempMinAge(parseInt(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer 
+                                     focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50
+                                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
+                                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-yellow-600 
+                                     [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
+                                     [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer
+                                     [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
+                                     [&::-moz-range-thumb]:bg-yellow-600 [&::-moz-range-thumb]:border-2 
+                                     [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md 
+                                     [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-none"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>{ageStats.min_age}</span>
+                            <span>{ageStats.max_age}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* Tags Section */}
             <div>
               <h4 className="font-medium text-gray-700 mb-3">Filter by Tags:</h4>
@@ -315,6 +436,7 @@ function LibraryFilters({
               onClick={() => {
                 setTempSelectedTagIds([]);
                 setTempPlayerCount(null);
+                setTempMinAge(null);
               }}
               color="light"
             >

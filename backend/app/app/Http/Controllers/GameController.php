@@ -15,6 +15,7 @@ class GameController extends Controller
         $search = $request->get('search');
         $tagIds = $request->get('tag_ids', []);
         $playerCount = $request->get('player_count');
+        $minAge = $request->get('min_age');
 
         $query = Game::with('tags');
         
@@ -45,6 +46,14 @@ class GameController extends Controller
                     $q->whereNull('player_max')
                     ->orWhere('player_max', '>=', (int)$playerCount);
               });
+        }
+        
+        // Apply minimum age filter: game's min_age should be less than or equal to the specified age
+        if ($minAge !== null && $minAge !== '') {
+            $query->where(function ($q) use ($minAge) {
+                $q->whereNull('min_age')
+                  ->orWhere('min_age', '<=', (int)$minAge);
+            });
         }
         
         $games = $query->orderBy('created_at', 'desc')
@@ -113,6 +122,16 @@ class GameController extends Controller
             'min_players' => (int)$minPlayers,
             'max_players' => (int)$maxPlayers,
             'suggested_default' => (int)ceil(($minPlayers + $maxPlayers) / 2)
+        ]);
+    }
+
+    // Get age statistics for filter bounds
+    public function ageStats()
+    {
+        return response()->json([
+            'min_age' => 1,
+            'max_age' => 18,
+            'suggested_default' => 8
         ]);
     }
 }

@@ -16,6 +16,7 @@ function Library() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [playerCount, setPlayerCount] = useState(null);
+  const [minAge, setMinAge] = useState(null);
   const navigate = useNavigate();
   const searchTimeoutRef = useRef();
 
@@ -44,6 +45,11 @@ function Library() {
         params.append('player_count', playerCount.toString());
       }
       
+      // Add minimum age filter if specified
+      if (minAge !== null) {
+        params.append('min_age', minAge.toString());
+      }
+      
       const res = await apiFetch(`/games?${params.toString()}`);
       if (!res.ok) throw new Error('Network response was not ok');
       
@@ -64,7 +70,7 @@ function Library() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, selectedTagIds, playerCount, itemsPerPage]);
+  }, [searchTerm, selectedTagIds, playerCount, minAge, itemsPerPage]);
 
   useEffect(() => {
     loadGames(1);
@@ -77,7 +83,7 @@ function Library() {
     } else {
       loadGames(1);
     }
-  }, [searchTerm, selectedTagIds, playerCount]);
+  }, [searchTerm, selectedTagIds, playerCount, minAge]);
 
   // Handle page change
   const handlePageChange = (page) => {
@@ -104,9 +110,10 @@ function Library() {
   };
 
   // Handle filter changes from LibraryFilters component
-  const handleFiltersChange = ({ selectedTagIds: newTagIds, playerCount: newPlayerCount }) => {
+  const handleFiltersChange = ({ selectedTagIds: newTagIds, playerCount: newPlayerCount, minAge: newMinAge }) => {
     setSelectedTagIds(newTagIds);
     setPlayerCount(newPlayerCount);
+    setMinAge(newMinAge);
   };
 
   // Clear all filters
@@ -114,6 +121,7 @@ function Library() {
     setSearchTerm('');
     setSelectedTagIds([]);
     setPlayerCount(null);
+    setMinAge(null);
     setCurrentPage(1);
   };
 
@@ -136,6 +144,7 @@ function Library() {
         onSearchChange={handleSearchChange}
         selectedTagIds={selectedTagIds}
         playerCount={playerCount}
+        minAge={minAge}
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
       />
@@ -162,7 +171,7 @@ function Library() {
         <div className="w-full max-w-7xl mx-auto">
           {!Array.isArray(games) || games.length === 0 ? (
             <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
-              {searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null ? 'No games match your search criteria.' : 'No games found.'}
+              {searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null ? 'No games match your search criteria.' : 'No games found.'}
             </div>
           ) : (
             <>
