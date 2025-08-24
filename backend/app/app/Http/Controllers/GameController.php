@@ -14,7 +14,8 @@ class GameController extends Controller
         $page = $request->get('page', 1);
         $search = $request->get('search');
         $tagIds = $request->get('tag_ids', []);
-        
+        $playerCount = $request->get('player_count');
+
         $query = Game::with('tags');
         
         // Apply search filter
@@ -35,6 +36,15 @@ class GameController extends Controller
                     $tagQuery->where('tags.id', $tagId);
                 });
             }
+        }
+        
+        // Apply player count filter: check if the given player count falls within the game's range
+        if ($playerCount !== null && $playerCount !== '') {
+            $query->where('player_min', '<=', (int)$playerCount)
+              ->where(function ($q) use ($playerCount) {
+                    $q->whereNull('player_max')
+                    ->orWhere('player_max', '>=', (int)$playerCount);
+              });
         }
         
         $games = $query->orderBy('created_at', 'desc')
@@ -91,5 +101,18 @@ class GameController extends Controller
     {
         $game->delete();
         return response()->noContent();
+    }
+
+    // Get player count statistics for filter bounds
+    public function playerStats()
+    {
+        $minPlayers = Game::min('player_min') ?: 1;
+        $maxPlayers = Game::max('player_max') ?: 10;
+        
+        return response()->json([
+            'min_players' => (int)$minPlayers,
+            'max_players' => (int)$maxPlayers,
+            'suggested_default' => (int)ceil(($minPlayers + $maxPlayers) / 2)
+        ]);
     }
 }
