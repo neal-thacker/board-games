@@ -17,19 +17,42 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white flex flex-col">
-        <nav className="w-full flex justify-between items-center py-4 bg-white shadow-md border-b-2 border-purple-600 px-2 sm:px-4 relative z-20">
-          <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
-            <span className="hidden sm:inline">Family Board Games</span>
+        <nav className="w-full bg-white shadow-md border-b-2 border-purple-600 relative z-20">
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center justify-between py-4 px-2 sm:px-4">
+            <div className="font-bold text-xl text-purple-700">
+              Family Board Games
+            </div>
+            <div className="flex items-center justify-center gap-8">
+              <Link to="/" className="flex items-center font-semibold text-purple-700 hover:text-purple-900 hover:bg-purple-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                <HiHome className="w-5 h-5 mr-2" /> Home
+              </Link>
+              <Link to="/library" className="flex items-center font-semibold text-purple-700 hover:text-purple-900 hover:bg-purple-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                <HiCollection className="w-5 h-5 mr-2" /> Library
+              </Link>
+              <Link to="/tags" className="flex items-center font-semibold text-purple-700 hover:text-purple-900 hover:bg-purple-50 px-4 py-2 rounded-lg transition-colors duration-200">
+                <HiTag className="w-5 h-5 mr-2" /> Tags
+              </Link>
+            </div>
           </div>
-          <button
-            className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
-            aria-label="Open navigation menu"
-            onClick={() => setNavOpen(!navOpen)}
-          >
-            {navOpen ? <HiX className="w-7 h-7 text-purple-700" /> : <HiMenu className="w-7 h-7 text-purple-700" />}
-          </button>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex justify-between items-center py-4 px-2 sm:px-4">
+            <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
+              <span className="hidden sm:inline">Family Board Games</span>
+            </div>
+            <button
+              className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
+              aria-label="Open navigation menu"
+              onClick={() => setNavOpen(!navOpen)}
+            >
+              {navOpen ? <HiX className="w-7 h-7 text-purple-700" /> : <HiMenu className="w-7 h-7 text-purple-700" />}
+            </button>
+          </div>
+
+          {/* Mobile Menu Dropdown */}
           {navOpen && (
-            <div className="absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30 md:hidden">
+            <div className="md:hidden absolute top-full left-0 w-full flex flex-col items-center bg-white shadow-lg border-b-2 border-purple-600 animate-fade-in z-30">
               <Link to="/" onClick={() => setNavOpen(false)} className="flex items-center w-full justify-center font-semibold text-purple-700 hover:bg-purple-50 px-4 py-3 border-b border-purple-100">
                 <HiHome className="w-5 h-5 mr-2" /> Home
               </Link>
