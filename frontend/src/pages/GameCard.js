@@ -19,7 +19,7 @@ function GameCard({ game }) {
 
   return (
     <Card 
-      className="max-w-sm w-full h-full cursor-pointer hover:shadow-lg transition-all duration-200 border-purple-200 hover:border-purple-400"
+      className="w-full h-full cursor-pointer hover:shadow-lg transition-all duration-200 border-purple-400 hover:border-purple-400"
       onClick={() => navigate(`/games/${game.id}`)}
     >
       <div className="flex flex-col h-full">
