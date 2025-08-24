@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from 'flowbite-react';
 import GameCard from './GameCard';
 
 function Library() {
@@ -12,9 +13,10 @@ function Library() {
   const [hasMore, setHasMore] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState([]);
+  const [tempSelectedTagIds, setTempSelectedTagIds] = useState([]);
   const [availableTags, setAvailableTags] = useState([]);
   const [loadingTags, setLoadingTags] = useState(true);
-  const [showTagFilter, setShowTagFilter] = useState(false);
+  const [showFilterModal, setShowFilterModal] = useState(false);
   const navigate = useNavigate();
   const observerRef = useRef();
   const searchTimeoutRef = useRef();
@@ -104,9 +106,9 @@ function Library() {
     }, 300);
   };
 
-  // Handle tag selection
-  const handleTagToggle = (tagId) => {
-    setSelectedTagIds(prev => {
+  // Handle tag selection in modal (temporary state)
+  const handleTempTagToggle = (tagId) => {
+    setTempSelectedTagIds(prev => {
       if (prev.includes(tagId)) {
         return prev.filter(id => id !== tagId);
       } else {
@@ -115,10 +117,29 @@ function Library() {
     });
   };
 
+  // Apply filters from modal
+  const applyFilters = () => {
+    setSelectedTagIds(tempSelectedTagIds);
+    setShowFilterModal(false);
+  };
+
+  // Cancel modal and reset temporary state
+  const cancelFilters = () => {
+    setTempSelectedTagIds(selectedTagIds);
+    setShowFilterModal(false);
+  };
+
+  // Open modal and initialize temporary state
+  const openFilterModal = () => {
+    setTempSelectedTagIds(selectedTagIds);
+    setShowFilterModal(true);
+  };
+
   // Clear all filters
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedTagIds([]);
+    setTempSelectedTagIds([]);
   };
 
   // Check if any filters are active
@@ -184,16 +205,22 @@ function Library() {
 
         {/* Filter Controls */}
         <div className="flex flex-wrap gap-3 items-center justify-center">
-          {/* Tag Filter Toggle */}
+          {/* Filter Button */}
           <button
-            onClick={() => setShowTagFilter(!showTagFilter)}
-            className={`px-4 py-2 rounded-lg border transition-colors ${
-              showTagFilter || selectedTagIds.length > 0
+            onClick={openFilterModal}
+            className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
+              selectedTagIds.length > 0
                 ? 'bg-purple-100 border-purple-300 text-purple-700'
                 : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
             }`}
           >
-            🏷️ Tags ({selectedTagIds.length})
+            <span>🔍</span>
+            Filters
+            {selectedTagIds.length > 0 && (
+              <span className="bg-purple-200 text-purple-800 rounded-full px-2 py-1 text-xs">
+                {selectedTagIds.length}
+              </span>
+            )}
           </button>
 
           {/* Clear Filters */}
@@ -218,7 +245,7 @@ function Library() {
                   >
                     {tag.name}
                     <button
-                      onClick={() => handleTagToggle(tagId)}
+                      onClick={() => setSelectedTagIds(prev => prev.filter(id => id !== tagId))}
                       className="ml-2 text-purple-600 hover:text-purple-800"
                     >
                       ✕
@@ -229,36 +256,68 @@ function Library() {
             </div>
           )}
         </div>
-
-        {/* Tag Filter Dropdown */}
-        {showTagFilter && (
-          <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-lg">
-            <h4 className="font-semibold text-gray-700 mb-3">Filter by Tags:</h4>
-            {loadingTags ? (
-              <p className="text-gray-500">Loading tags...</p>
-            ) : availableTags.length === 0 ? (
-              <p className="text-gray-500">No tags available</p>
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 max-h-48 overflow-y-auto">
-                {availableTags.map(tag => (
-                  <label
-                    key={tag.id}
-                    className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedTagIds.includes(tag.id)}
-                      onChange={() => handleTagToggle(tag.id)}
-                      className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-                    />
-                    <span className="text-sm text-gray-700">{tag.name}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
+
+      {/* Filter Modal */}
+      <Modal show={showFilterModal} onClose={cancelFilters} size="lg">
+        <Modal.Header>
+          Filter Games
+        </Modal.Header>
+        <Modal.Body>
+          <div className="space-y-4">
+            {/* Tags Section */}
+            <div>
+              <h4 className="font-medium text-gray-700 mb-3">Filter by Tags:</h4>
+              {loadingTags ? (
+                <p className="text-gray-500">Loading tags...</p>
+              ) : availableTags.length === 0 ? (
+                <p className="text-gray-500">No tags available</p>
+              ) : (
+                <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
+                  {availableTags.map(tag => (
+                    <label
+                      key={tag.id}
+                      className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={tempSelectedTagIds.includes(tag.id)}
+                        onChange={() => handleTempTagToggle(tag.id)}
+                        className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+                      />
+                      <span className="text-sm text-gray-700">{tag.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <div className="flex items-center justify-between w-full">
+            <button
+              onClick={() => setTempSelectedTagIds([])}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+            >
+              Clear All
+            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={cancelFilters}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={applyFilters}
+                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors"
+              >
+                Apply Filters
+              </button>
+            </div>
+          </div>
+        </Modal.Footer>
+      </Modal>
 
       <p className="text-lg text-gray-700">Browse all available board games here.</p>
       {loading && <p>Loading games...</p>}
