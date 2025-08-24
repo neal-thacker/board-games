@@ -1,16 +1,17 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
-import { Modal, ModalBody, ModalHeader, ModalFooter, Button, TextInput, Badge, Spinner } from 'flowbite-react';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, TextInput, Badge, Spinner, Pagination } from 'flowbite-react';
 import GameCard from './GameCard';
 
 function Library() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [tempSelectedTagIds, setTempSelectedTagIds] = useState([]);
@@ -22,21 +23,16 @@ function Library() {
   const [playerStats, setPlayerStats] = useState({ min_players: 1, max_players: 10, suggested_default: 4 });
   const [loadingPlayerStats, setLoadingPlayerStats] = useState(true);
   const navigate = useNavigate();
-  const observerRef = useRef();
   const searchTimeoutRef = useRef();
 
-  const loadGames = useCallback(async (page = 1, reset = false) => {
+  const loadGames = useCallback(async (page = 1) => {
     try {
-      if (page === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
+      setLoading(true);
       
       // Build query parameters
       const params = new URLSearchParams({
         page: page.toString(),
-        per_page: '12'
+        per_page: itemsPerPage.toString()
       });
       
       if (searchTerm.trim()) {
@@ -59,26 +55,31 @@ function Library() {
       
       const data = await res.json();
       
-      if (reset || page === 1) {
-        setGames(data.data);
-      } else {
-        setGames(prev => [...prev, ...data.data]);
-      }
-      
-      setHasMore(data.has_more);
+      setGames(data.data);
       setCurrentPage(data.current_page);
+      setTotalPages(data.last_page);
+      setTotalItems(data.total);
+      setItemsPerPage(data.per_page);
       setError(null);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
-      setLoadingMore(false);
     }
-  }, [searchTerm, selectedTagIds, playerCount]);
+  }, [searchTerm, selectedTagIds, playerCount, itemsPerPage]);
 
   useEffect(() => {
-    loadGames(1, true);
+    loadGames(1);
   }, [loadGames]);
+
+  useEffect(() => {
+    // Reset to page 1 when filters change
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      loadGames(1);
+    }
+  }, [searchTerm, selectedTagIds, playerCount]);
 
   // Load available tags
   useEffect(() => {
@@ -119,6 +120,14 @@ function Library() {
     
     loadPlayerStats();
   }, []);
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    loadGames(page);
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Handle search with debouncing
   const handleSearchChange = (e) => {
@@ -175,22 +184,11 @@ function Library() {
     setTempSelectedTagIds([]);
     setPlayerCount(null);
     setTempPlayerCount(null);
+    setCurrentPage(1);
   };
 
   // Check if any filters are active
   const hasActiveFilters = searchTerm.trim() || selectedTagIds.length > 0 || playerCount !== null;
-
-  // Intersection Observer for infinite scrolling
-  const lastGameElementRef = useCallback(node => {
-    if (loading || loadingMore) return;
-    if (observerRef.current) observerRef.current.disconnect();
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        loadGames(currentPage + 1, false);
-      }
-    });
-    if (node) observerRef.current.observe(node);
-  }, [loading, loadingMore, hasMore, currentPage, loadGames]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('Are you sure you want to delete this game?')) return;
@@ -473,35 +471,45 @@ function Library() {
               {hasActiveFilters ? 'No games match your search criteria.' : 'No games found.'}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              {games.map((game, idx) => (
-                <div
-                  key={game.id || idx}
-                  ref={idx === games.length - 1 ? lastGameElementRef : null}
-                  className="h-full"
-                >
-                  <GameCard
-                    game={{ ...game, onDelete: handleDelete }}
+            <>
+              {/* Results Summary */}
+              <div className="flex justify-center mb-6">
+                <div className="text-sm text-gray-600 bg-gray-50 px-4 py-2 rounded-lg">
+                  Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} games
+                </div>
+              </div>
+
+              {/* Games Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-8">
+                {games.map((game, idx) => (
+                  <div
+                    key={game.id || idx}
+                    className="h-full"
+                  >
+                    <GameCard
+                      game={{ ...game, onDelete: handleDelete }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-8">
+                  <Pagination
+                    layout="table"
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    itemsPerPage={itemsPerPage}
+                    totalItems={totalItems}
+                    onPageChange={handlePageChange}
+                    showIcons
+                    className="text-sm"
                   />
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
-        </div>
-      )}
-      
-      {/* Loading More Indicator */}
-      {loadingMore && (
-        <div className="flex justify-center items-center py-4">
-          <Spinner size="md" />
-          <span className="ml-2 text-gray-600">Loading more games...</span>
-        </div>
-      )}
-      
-      {/* End of List Indicator */}
-      {!hasMore && games.length > 0 && (
-        <div className="text-center py-4 text-gray-500">
-          You've reached the end of the library!
         </div>
       )}
     </main>
