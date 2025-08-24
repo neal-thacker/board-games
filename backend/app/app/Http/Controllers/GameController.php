@@ -8,9 +8,23 @@ use Illuminate\Http\Request;
 class GameController extends Controller
 {
     // Display a listing of the games
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Game::with('tags')->get(), 200);
+        $perPage = $request->get('per_page', 12); // Default 12 games per page
+        $page = $request->get('page', 1);
+        
+        $games = Game::with('tags')
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+        
+        return response()->json([
+            'data' => $games->items(),
+            'current_page' => $games->currentPage(),
+            'last_page' => $games->lastPage(),
+            'per_page' => $games->perPage(),
+            'total' => $games->total(),
+            'has_more' => $games->hasMorePages()
+        ], 200);
     }
 
     // Store a newly created game

@@ -13,7 +13,7 @@ class GameTagSeeder extends Seeder
         // Create tags
         $tags = Tag::factory(10)->create();
         // Create games
-        $games = Game::factory(10)->create();
+        $games = Game::factory(50)->create();
 
         // Attach random tags to each game
         foreach ($games as $game) {
