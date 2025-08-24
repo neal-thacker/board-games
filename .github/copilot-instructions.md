@@ -73,6 +73,9 @@ This is a full-stack board games management application with a Laravel backend a
 - Shared utilities and helpers in appropriate subdirectories
 
 ## Development Workflow
+- **IMPORTANT: Always use `docker-compose.dev.yml` for development**
+  - Use `docker compose -f docker-compose.dev.yml up` to start the development environment
+  - Use `docker compose -f docker-compose.dev.yml exec app bash` to access the Laravel container
 - Use Docker for local development environment
 - Backend runs on Laravel with SQLite database
 - Frontend uses React with Webpack bundling
