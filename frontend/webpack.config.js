@@ -2,11 +2,13 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 module.exports = {
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: 'main.js',
+    filename: isProduction ? '[name].[contenthash].js' : 'main.js',
     clean: true,
   },
   experiments: {
@@ -20,7 +22,14 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
+            presets: [
+              ['@babel/preset-env', {
+                targets: {
+                  browsers: ['> 1%', 'last 2 versions', 'not ie <= 8']
+                }
+              }],
+              '@babel/preset-react'
+            ],
           },
         },
       },
@@ -47,12 +56,19 @@ module.exports = {
     },
     fullySpecified: false
   },
+  optimization: {
+    minimize: isProduction,
+    // Ensure proper variable names in production
+    minimizer: isProduction ? undefined : [],
+    usedExports: true,
+    sideEffects: false,
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'public', 'index.html'),
     }),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.NODE_ENV': JSON.stringify(isProduction ? 'production' : 'development'),
       'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api')
     }),
     new webpack.ProvidePlugin({
@@ -77,5 +93,5 @@ module.exports = {
       }
     ],
   },
-  mode: 'development',
+  mode: isProduction ? 'production' : 'development',
 };

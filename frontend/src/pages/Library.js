@@ -55,14 +55,18 @@ function Library() {
       
       const data = await res.json();
       
-      setGames(data.data);
-      setCurrentPage(data.current_page);
-      setTotalPages(data.last_page);
-      setTotalItems(data.total);
-      setItemsPerPage(data.per_page);
+      // Ensure data.data is an array, fallback to empty array if not
+      const gamesData = data && data.data ? data.data : [];
+      setGames(Array.isArray(gamesData) ? gamesData : []);
+      setCurrentPage(data && data.current_page ? data.current_page : 1);
+      setTotalPages(data && data.last_page ? data.last_page : 1);
+      setTotalItems(data && data.total ? data.total : 0);
+      setItemsPerPage(data && data.per_page ? data.per_page : 12);
       setError(null);
     } catch (err) {
-      setError(err.message);
+      console.error('Error loading games:', err);
+      setError(`Failed to load games: ${err.message}`);
+      setGames([]); // Ensure games is always an array
     } finally {
       setLoading(false);
     }
@@ -89,9 +93,11 @@ function Library() {
         const res = await apiFetch('/tags');
         if (!res.ok) throw new Error('Failed to load tags');
         const tags = await res.json();
-        setAvailableTags(tags);
+        // Ensure tags is an array
+        setAvailableTags(Array.isArray(tags) ? tags : []);
       } catch (err) {
         console.error('Error loading tags:', err);
+        setAvailableTags([]); // Ensure tags is always an array
       } finally {
         setLoadingTags(false);
       }
@@ -148,10 +154,11 @@ function Library() {
   // Handle tag selection in modal (temporary state)
   const handleTempTagToggle = (tagId) => {
     setTempSelectedTagIds(prev => {
-      if (prev.includes(tagId)) {
-        return prev.filter(id => id !== tagId);
+      const currentIds = Array.isArray(prev) ? prev : [];
+      if (currentIds.includes(tagId)) {
+        return currentIds.filter(id => id !== tagId);
       } else {
-        return [...prev, tagId];
+        return [...currentIds, tagId];
       }
     });
   };
@@ -188,7 +195,7 @@ function Library() {
   };
 
   // Check if any filters are active
-  const hasActiveFilters = searchTerm.trim() || selectedTagIds.length > 0 || playerCount !== null;
+  const hasActiveFilters = searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null;
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12 p-4">
@@ -232,14 +239,14 @@ function Library() {
             {/* Filter Button */}
             <Button
               onClick={openFilterModal}
-              color={selectedTagIds.length > 0 || playerCount !== null ? 'purple' : 'light'}
+              color={(Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null ? 'purple' : 'light'}
               className="flex items-center gap-2"
             >
               <span>🔍</span>
               Filters
-              {(selectedTagIds.length > 0 || playerCount !== null) && (
+              {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null) && (
                 <Badge color="purple" size="sm">
-                  {selectedTagIds.length + (playerCount !== null ? 1 : 0)}
+                  {(Array.isArray(selectedTagIds) ? selectedTagIds.length : 0) + (playerCount !== null ? 1 : 0)}
                 </Badge>
               )}
             </Button>
@@ -257,10 +264,10 @@ function Library() {
         </div>
 
         {/* Active Filters Display */}
-        {(selectedTagIds.length > 0 || playerCount !== null) && (
+        {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null) && (
           <div className="flex flex-wrap gap-2 justify-center">
             {/* Tag filters */}
-            {selectedTagIds.map(tagId => {
+            {Array.isArray(selectedTagIds) && selectedTagIds.map(tagId => {
               const tag = availableTags.find(t => t.id === tagId);
               return tag ? (
                 <Badge
@@ -270,7 +277,7 @@ function Library() {
                 >
                   {tag.name}
                   <button
-                    onClick={() => setSelectedTagIds(prev => prev.filter(id => id !== tagId))}
+                    onClick={() => setSelectedTagIds(prev => Array.isArray(prev) ? prev.filter(id => id !== tagId) : [])}
                     className="ml-1 text-purple-600 hover:text-purple-800"
                   >
                     ✕
@@ -381,11 +388,11 @@ function Library() {
               <h4 className="font-medium text-gray-700 mb-3">Filter by Tags:</h4>
               {loadingTags ? (
                 <p className="text-gray-500">Loading tags...</p>
-              ) : availableTags.length === 0 ? (
+              ) : Array.isArray(availableTags) && availableTags.length === 0 ? (
                 <p className="text-gray-500">No tags available</p>
               ) : (
                 <div className="grid grid-cols-1 gap-2 max-h-60 overflow-y-auto">
-                  {availableTags.map(tag => (
+                  {Array.isArray(availableTags) && availableTags.map(tag => (
                     <label
                       key={tag.id}
                       className="flex items-center space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors"
@@ -453,7 +460,7 @@ function Library() {
       {/* Games Grid */}
       {!loading && !error && (
         <div className="w-full max-w-7xl mx-auto">
-          {games.length === 0 ? (
+          {!Array.isArray(games) || games.length === 0 ? (
             <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
               {hasActiveFilters ? 'No games match your search criteria.' : 'No games found.'}
             </div>
@@ -467,7 +474,7 @@ function Library() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-                {games.map((game, idx) => (
+                {Array.isArray(games) && games.map((game, idx) => (
                   <GameCard
                     key={game.id || idx}
                     game={game}

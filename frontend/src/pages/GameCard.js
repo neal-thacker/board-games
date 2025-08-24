@@ -37,23 +37,23 @@ function GameCard({ game }) {
           <div className="flex-none space-y-3">
             {/* Player count and play time */}
             <div className="flex justify-center gap-2 flex-wrap">
-              {(game.min_players || game.max_players) && (
+              {(game.player_min || game.player_max) && (
                 <Badge color="purple" size="sm">
-                  {game.min_players === game.max_players 
-                    ? `${game.min_players} ${game.min_players === 1 ? 'player' : 'players'}`
-                    : `${game.min_players || '?'}-${game.max_players || '?'} players`
+                  {game.player_min === game.player_max 
+                    ? `${game.player_min || '?'} ${(game.player_min || 1) === 1 ? 'player' : 'players'}`
+                    : `${game.player_min || '?'}-${game.player_max || '?'} players`
                   }
                 </Badge>
               )}
-              {game.play_time && (
+              {game.estimated_time && (
                 <Badge color="indigo" size="sm">
-                  {game.play_time} min
+                  {game.estimated_time} min
                 </Badge>
               )}
             </div>
 
             {/* Tags */}
-            {game.tags && game.tags.length > 0 && (
+            {game.tags && Array.isArray(game.tags) && game.tags.length > 0 && (
               <div className="flex justify-center gap-1 flex-wrap">
                 {game.tags.slice(0, 3).map((tag) => (
                   <Badge key={tag.id} color="gray" size="xs">
