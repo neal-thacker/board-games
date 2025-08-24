@@ -9,13 +9,13 @@ return (
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 w-full justify-center py-8">
             <Link
                     to="/library"
-                    className="px-8 py-3 text-base sm:text-lg shadow-lg w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white border-2 border-purple-900 transition-colors duration-200 hover:scale-105 focus:scale-105 focus:ring-4 focus:ring-purple-300 flex items-center justify-center rounded-lg font-medium"
+                    className="px-8 py-3 text-base sm:text-lg shadow-lg w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white border-2 border-purple-800 transition-colors duration-200 hover:scale-105 focus:scale-105 focus:ring-4 focus:ring-purple-300 flex items-center justify-center rounded-lg font-medium"
             >
                     Explore Library
             </Link>
             <Link
                     to="/tags"
-                    className="px-8 py-3 text-base sm:text-lg shadow-lg w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white border-2 border-purple-900 transition-colors duration-200 hover:scale-105 focus:scale-105 focus:ring-4 focus:ring-purple-300 flex items-center justify-center rounded-lg font-medium"
+                    className="px-8 py-3 text-base sm:text-lg shadow-lg w-full sm:w-auto bg-purple-700 hover:bg-purple-800 text-white border-2 border-purple-800 transition-colors duration-200 hover:scale-105 focus:scale-105 focus:ring-4 focus:ring-purple-300 flex items-center justify-center rounded-lg font-medium"
             >
                     Browse Tags
             </Link>

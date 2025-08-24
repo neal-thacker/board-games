@@ -5,22 +5,14 @@ import { Card, Badge, Button } from 'flowbite-react';
 function GameCard({ game }) {
   const navigate = useNavigate();
 
-  const handleEdit = (e) => {
-    e.stopPropagation();
-    navigate(`/games/${game.id}/edit`);
-  };
-
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    if (game.onDelete) {
-      game.onDelete(game.id);
-    }
+  const handleCardClick = () => {
+    navigate(`/games/${game.id}`);
   };
 
   return (
     <Card 
       className="w-full h-full cursor-pointer hover:shadow-lg transition-all duration-200 border-purple-400 hover:border-purple-400"
-      onClick={() => navigate(`/games/${game.id}`)}
+      onClick={handleCardClick}
     >
       <div className="flex flex-col h-full">
         {/* Header */}
@@ -75,26 +67,6 @@ function GameCard({ game }) {
                 )}
               </div>
             )}
-
-            {/* Action buttons */}
-            <div className="flex justify-center gap-2 pt-2">
-              <Button
-                size="xs"
-                color="purple"
-                onClick={handleEdit}
-                className="px-3"
-              >
-                Edit
-              </Button>
-              <Button
-                size="xs"
-                color="failure"
-                onClick={handleDelete}
-                className="px-3"
-              >
-                Delete
-              </Button>
-            </div>
           </div>
         </div>
       </div>

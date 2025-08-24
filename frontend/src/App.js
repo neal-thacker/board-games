@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Library from './pages/Library';
 import TagsList from './pages/TagsList';
 import GameCreate from './pages/GameCreate';
+import GameView from './pages/GameView';
 import GameEdit from './pages/GameEdit';
 import TagCreate from './pages/TagCreate';
 import TagEdit from './pages/TagEdit';
@@ -52,6 +53,7 @@ function App() {
               <Route path="/tags/:id/edit" element={<TagEdit />} />
               <Route path="/tags/:id/delete" element={<TagDelete />} />
               <Route path="/games/new" element={<GameCreate />} />
+              <Route path="/games/:id" element={<GameView />} />
               <Route path="/games/:id/edit" element={<GameEdit />} />
             </Routes>
           </div>

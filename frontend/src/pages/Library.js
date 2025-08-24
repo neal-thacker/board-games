@@ -190,19 +190,6 @@ function Library() {
   // Check if any filters are active
   const hasActiveFilters = searchTerm.trim() || selectedTagIds.length > 0 || playerCount !== null;
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this game?')) return;
-    
-    try {
-      const res = await apiFetch(`/games/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete game');
-      
-      setGames((games) => games.filter((g) => g.id !== id));
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
   return (
     <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12 p-4">
       {/* Header */}
@@ -483,7 +470,7 @@ function Library() {
                 {games.map((game, idx) => (
                   <GameCard
                     key={game.id || idx}
-                    game={{ ...game, onDelete: handleDelete }}
+                    game={game}
                   />
                 ))}
               </div>

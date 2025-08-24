@@ -64,7 +64,7 @@ export default function GameEdit() {
   return (
     <main className="flex flex-1 flex-col items-center justify-center px-4 w-full max-w-7xl mx-auto">
       <h2 className="text-2xl font-bold text-purple-700 mb-4">Edit Game</h2>
-      <GameForm initialData={game} onSubmit={handleUpdate} onCancel={() => navigate('/library')} />
+      <GameForm initialData={game} onSubmit={handleUpdate} onCancel={() => navigate(`/games/${id}`)} />
     </main>
   );
 }
