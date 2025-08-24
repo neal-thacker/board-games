@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
-import { Modal, ModalBody, ModalHeader, ModalFooter } from 'flowbite-react';
+import { Modal, ModalBody, ModalHeader, ModalFooter, Button, TextInput, Badge, Spinner } from 'flowbite-react';
 import GameCard from './GameCard';
 
 function Library() {
@@ -206,108 +206,114 @@ function Library() {
   };
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12">
+    <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12 p-4">
+      {/* Header */}
       <div className="flex w-full justify-between items-center mb-4">
         <h2 className="text-3xl font-bold text-purple-700">Library</h2>
-        <button
-          className="px-4 py-2 rounded bg-purple-600 text-white hover:bg-purple-700"
+        <Button
+          color="purple"
           onClick={() => navigate('/games/new')}
         >
           + Add Game
-        </button>
+        </Button>
       </div>
       
       {/* Search and Filter Section */}
       <div className="w-full max-w-4xl space-y-4">
-        {/* Search Bar */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search games by name, description, or tags..."
-            value={searchTerm}
-            onChange={handleSearchChange}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+        {/* Search Bar and Filter Controls */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center">
+          {/* Search Bar */}
+          <div className="relative flex-1 w-full">
+            <TextInput
+              type="text"
+              placeholder="Search games by name, description, or tags..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full"
+              sizing="lg"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Filter Controls */}
+          <div className="flex flex-wrap gap-3 items-center justify-center sm:justify-end">
+            {/* Filter Button */}
+            <Button
+              onClick={openFilterModal}
+              color={selectedTagIds.length > 0 || playerCount !== null ? 'purple' : 'light'}
+              className="flex items-center gap-2"
             >
-              ✕
-            </button>
-          )}
+              <span>🔍</span>
+              Filters
+              {(selectedTagIds.length > 0 || playerCount !== null) && (
+                <Badge color="purple" size="sm">
+                  {selectedTagIds.length + (playerCount !== null ? 1 : 0)}
+                </Badge>
+              )}
+            </Button>
+
+            {/* Clear Filters */}
+            {hasActiveFilters && (
+              <Button
+                onClick={clearFilters}
+                color="light"
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Filter Controls */}
-        <div className="flex flex-wrap gap-3 items-center justify-center">
-          {/* Filter Button */}
-          <button
-            onClick={openFilterModal}
-            className={`px-4 py-2 rounded-lg border transition-colors flex items-center gap-2 ${
-              selectedTagIds.length > 0 || playerCount !== null
-                ? 'bg-purple-100 border-purple-300 text-purple-700'
-                : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <span>🔍</span>
-            Filters
-            {(selectedTagIds.length > 0 || playerCount !== null) && (
-              <span className="bg-purple-200 text-purple-800 rounded-full px-2 py-1 text-xs">
-                {selectedTagIds.length + (playerCount !== null ? 1 : 0)}
-              </span>
-            )}
-          </button>
-
-          {/* Clear Filters */}
-          {hasActiveFilters && (
-            <button
-              onClick={clearFilters}
-              className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
-            >
-              Clear Filters
-            </button>
-          )}
-
-          {/* Active Filters Display */}
-          {(selectedTagIds.length > 0 || playerCount !== null) && (
-            <div className="flex flex-wrap gap-2">
-              {/* Tag filters */}
-              {selectedTagIds.map(tagId => {
-                const tag = availableTags.find(t => t.id === tagId);
-                return tag ? (
-                  <span
-                    key={tagId}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800"
-                  >
-                    {tag.name}
-                    <button
-                      onClick={() => setSelectedTagIds(prev => prev.filter(id => id !== tagId))}
-                      className="ml-2 text-purple-600 hover:text-purple-800"
-                    >
-                      ✕
-                    </button>
-                  </span>
-                ) : null;
-              })}
-              
-              {/* Player count filter */}
-              {playerCount !== null && (
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
-                  {playerCount} {playerCount === 1 ? 'player' : 'players'}
+        {/* Active Filters Display */}
+        {(selectedTagIds.length > 0 || playerCount !== null) && (
+          <div className="flex flex-wrap gap-2 justify-center">
+            {/* Tag filters */}
+            {selectedTagIds.map(tagId => {
+              const tag = availableTags.find(t => t.id === tagId);
+              return tag ? (
+                <Badge
+                  key={tagId}
+                  color="purple"
+                  className="flex items-center gap-1"
+                >
+                  {tag.name}
                   <button
-                    onClick={() => {
-                      setPlayerCount(null);
-                      setTempPlayerCount(null);
-                    }}
-                    className="ml-2 text-blue-600 hover:text-blue-800"
+                    onClick={() => setSelectedTagIds(prev => prev.filter(id => id !== tagId))}
+                    className="ml-1 text-purple-600 hover:text-purple-800"
                   >
                     ✕
                   </button>
-                </span>
-              )}
-            </div>
-          )}
-        </div>
+                </Badge>
+              ) : null;
+            })}
+            
+            {/* Player count filter */}
+            {playerCount !== null && (
+              <Badge
+                color="info"
+                className="flex items-center gap-1"
+              >
+                {playerCount} {playerCount === 1 ? 'player' : 'players'}
+                <button
+                  onClick={() => {
+                    setPlayerCount(null);
+                    setTempPlayerCount(null);
+                  }}
+                  className="ml-1 text-blue-600 hover:text-blue-800"
+                >
+                  ✕
+                </button>
+              </Badge>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Filter Modal */}
@@ -415,64 +421,84 @@ function Library() {
         </ModalBody>
         <ModalFooter>
           <div className="flex items-center justify-between w-full">
-            <button
+            <Button
               onClick={() => {
                 setTempSelectedTagIds([]);
                 setTempPlayerCount(null);
               }}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+              color="light"
             >
               Clear All
-            </button>
-            <div className="flex space-x-6">
-              <button
+            </Button>
+            <div className="flex space-x-3">
+              <Button
                 onClick={cancelFilters}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                color="light"
               >
                 Cancel
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={applyFilters}
-                className="px-4 py-2 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700 transition-colors"
+                color="purple"
               >
                 Apply Filters
-              </button>
+              </Button>
             </div>
           </div>
         </ModalFooter>
       </Modal>
 
       <p className="text-lg text-gray-700">Browse all available board games here.</p>
-      {loading && <p>Loading games...</p>}
-      {error && <p className="text-red-500">Error: {error}</p>}
+      
+      {/* Loading State */}
+      {loading && (
+        <div className="flex justify-center items-center py-8">
+          <Spinner size="lg" />
+          <span className="ml-3 text-gray-600">Loading games...</span>
+        </div>
+      )}
+      
+      {/* Error State */}
+      {error && (
+        <div className="text-red-500 bg-red-50 border border-red-200 rounded-lg p-4">
+          Error: {error}
+        </div>
+      )}
+      
+      {/* Games Grid */}
       {!loading && !error && (
-        <div className="flex flex-wrap gap-6 w-full max-w-5xl mx-auto justify-center">
+        <div className="w-full max-w-7xl mx-auto">
           {games.length === 0 ? (
-            <div className="text-gray-500">
+            <div className="text-gray-500 text-center py-12 bg-gray-50 rounded-lg">
               {hasActiveFilters ? 'No games match your search criteria.' : 'No games found.'}
             </div>
           ) : (
-            games.map((game, idx) => (
-              <div
-                key={game.id || idx}
-                ref={idx === games.length - 1 ? lastGameElementRef : null}
-              >
-                <GameCard
-                  game={{ ...game, onDelete: handleDelete }}
-                />
-              </div>
-            ))
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              {games.map((game, idx) => (
+                <div
+                  key={game.id || idx}
+                  ref={idx === games.length - 1 ? lastGameElementRef : null}
+                  className="h-full"
+                >
+                  <GameCard
+                    game={{ ...game, onDelete: handleDelete }}
+                  />
+                </div>
+              ))}
+            </div>
           )}
         </div>
       )}
       
+      {/* Loading More Indicator */}
       {loadingMore && (
         <div className="flex justify-center items-center py-4">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+          <Spinner size="md" />
           <span className="ml-2 text-gray-600">Loading more games...</span>
         </div>
       )}
       
+      {/* End of List Indicator */}
       {!hasMore && games.length > 0 && (
         <div className="text-center py-4 text-gray-500">
           You've reached the end of the library!
