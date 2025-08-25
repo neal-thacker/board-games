@@ -2,9 +2,7 @@
 // In development, use proxy to avoid CORS issues
 // In production, uses environment variable or defaults to relative path
 
-const API_BASE_URL = process.env.NODE_ENV === 'development' 
-  ? '/api'  // Use proxy in development
-  : (process.env.REACT_APP_API_BASE_URL || '/api');
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
 
 export function apiFetch(path, options) {
   // Ensure no double slashes

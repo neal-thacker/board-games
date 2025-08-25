@@ -100,7 +100,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+      <form onSubmit={handleSubmit} action="#" className="space-y-6 bg-white p-8 rounded-lg shadow-lg border border-gray-200">
 
         {/* Game Name */}
         <div>
@@ -116,8 +116,8 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             color={errors.name ? 'failure' : 'gray'}
-            required
           />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
         </div>
 
         {/* Description */}
@@ -152,8 +152,8 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               value={playerMin}
               onChange={(e) => setPlayerMin(e.target.value)}
               color={errors.playerMin ? 'failure' : 'gray'}
-              required
             />
+            {errors.playerMin && <p className="text-red-500 text-sm mt-1">{errors.playerMin}</p>}
           </div>
           <div>
             <div className="mb-2 block">
@@ -170,6 +170,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               onChange={(e) => setPlayerMax(e.target.value)}
               color={errors.playerMax ? 'failure' : 'gray'}
             />
+            {errors.playerMax && <p className="text-red-500 text-sm mt-1">{errors.playerMax}</p>}
           </div>
         </div>
 
@@ -190,6 +191,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               onChange={(e) => setEstimatedTime(e.target.value)}
               color={errors.estimatedTime ? 'failure' : 'gray'}
             />
+            {errors.estimatedTime && <p className="text-red-500 text-sm mt-1">{errors.estimatedTime}</p>}
           </div>
           <div>
             <div className="mb-2 block">
@@ -206,6 +208,7 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               onChange={(e) => setMinAge(e.target.value)}
               color={errors.minAge ? 'failure' : 'gray'}
             />
+            {errors.minAge && <p className="text-red-500 text-sm mt-1">{errors.minAge}</p>}
           </div>
         </div>
 
