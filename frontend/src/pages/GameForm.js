@@ -116,7 +116,6 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             color={errors.name ? 'failure' : 'gray'}
-            helperText={errors.name}
             required
           />
         </div>
@@ -153,7 +152,6 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               value={playerMin}
               onChange={(e) => setPlayerMin(e.target.value)}
               color={errors.playerMin ? 'failure' : 'gray'}
-              helperText={errors.playerMin}
               required
             />
           </div>
@@ -171,7 +169,6 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               value={playerMax}
               onChange={(e) => setPlayerMax(e.target.value)}
               color={errors.playerMax ? 'failure' : 'gray'}
-              helperText={errors.playerMax}
             />
           </div>
         </div>
@@ -192,7 +189,6 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               value={estimatedTime}
               onChange={(e) => setEstimatedTime(e.target.value)}
               color={errors.estimatedTime ? 'failure' : 'gray'}
-              helperText={errors.estimatedTime}
             />
           </div>
           <div>
@@ -209,7 +205,6 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
               value={minAge}
               onChange={(e) => setMinAge(e.target.value)}
               color={errors.minAge ? 'failure' : 'gray'}
-              helperText={errors.minAge}
             />
           </div>
         </div>
