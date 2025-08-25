@@ -1,9 +1,12 @@
 # Build stage
-FROM node:20-alpine as build
+FROM node:20-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
+# Clean any existing build files and build fresh
+RUN rm -rf dist/ build/
+ENV NODE_ENV=production
 RUN npm run build
 
 # Production stage

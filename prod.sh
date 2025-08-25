@@ -2,7 +2,7 @@
 set -e
 
 echo "🔨 Building fresh images..."
-docker compose build --no-cache
+docker compose build
 
 echo "🚀 Starting containers..."
 docker compose up -d
