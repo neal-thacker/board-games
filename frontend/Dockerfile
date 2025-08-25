@@ -6,6 +6,9 @@ RUN npm install
 COPY . .
 # Clean any existing build files and build fresh
 RUN rm -rf dist/ build/
+# Set build-time environment variables
+ARG REACT_APP_API_BASE_URL
+ENV REACT_APP_API_BASE_URL=${REACT_APP_API_BASE_URL}
 ENV NODE_ENV=production
 RUN npm run build
 

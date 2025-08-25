@@ -1,2 +1,13 @@
 /frontend/node_modules
+
+# Environment files
 .env
+.env.local
+.env.production
+.env.production.docker
+frontend/.env
+frontend/.env.local
+frontend/.env.production
+backend/.env
+backend/.env.local
+backend/.env.production
