@@ -40,6 +40,16 @@ For development, we run only the database and PHP backend in Docker containers, 
 - The webpack dev server proxies `/api` requests to the backend at `localhost:8000`
 - Hot reloading is enabled for React components
 
+#### Production Environment Setup
+
+For production deployment, copy the example environment files and configure them:
+
+```bash
+cp .env.production.docker.example .env.production.docker
+cp frontend/.env.production.example frontend/.env.production
+# Then edit the files with their own IP addresses
+```
+
 ### Useful Commands
 
 ```bash
