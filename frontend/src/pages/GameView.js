@@ -110,7 +110,7 @@ function GameView() {
             <HiPencil className="mr-2 h-4 w-4" />
             Edit
           </Button>
-          <Button onClick={handleDelete} color="failure" size="sm">
+          <Button onClick={handleDelete} color="light" size="sm">
             <HiTrash className="mr-2 h-4 w-4" />
             Delete
           </Button>
@@ -161,65 +161,22 @@ function GameView() {
             </div>
           )}
 
-          {/* Tags */}
           {game.tags && game.tags.length > 0 && (
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Tags</h3>
-              <div className="flex justify-center gap-2 flex-wrap">
-                {game.tags.map((tag) => (
-                  <Badge key={tag.id} color="gray" size="lg" className="px-3 py-1">
-                    {tag.name}
-                  </Badge>
-                ))}
-              </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Tags</h3>
+            <div className="flex justify-center gap-2 flex-wrap">
+            {game.tags.map((tag) => {
+              const colors = ['purple', 'blue', 'green', 'red', 'yellow', 'indigo', 'pink', 'gray'];
+              const randomColor = colors[Math.floor(Math.random() * colors.length)];
+              return (
+              <Badge key={tag.id} color={randomColor} size="lg" className="px-3 py-1">
+                {tag.name}
+              </Badge>
+              );
+            })}
             </div>
-          )}
-
-          {/* Additional game details */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50 rounded-lg p-6">
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-2">Game Details</h4>
-              <dl className="space-y-2 text-sm">
-                {game.player_min && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-600">Minimum Players:</dt>
-                    <dd className="font-medium">{game.player_min}</dd>
-                  </div>
-                )}
-                {game.player_max && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-600">Maximum Players:</dt>
-                    <dd className="font-medium">{game.player_max}</dd>
-                  </div>
-                )}
-                {game.estimated_time && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-600">Play Time:</dt>
-                    <dd className="font-medium">{game.estimated_time} minutes</dd>
-                  </div>
-                )}
-                {game.min_age && (
-                  <div className="flex justify-between">
-                    <dt className="text-gray-600">Minimum Age:</dt>
-                    <dd className="font-medium">{game.min_age}+</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-            
-            {game.tags && game.tags.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-2">Categories</h4>
-                <div className="space-y-1">
-                  {game.tags.map((tag) => (
-                    <div key={tag.id} className="text-sm text-gray-600">
-                      • {tag.name}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
+          )}
         </div>
       </Card>
     </main>
