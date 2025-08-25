@@ -152,7 +152,7 @@ function TagDelete() {
           <div className="flex gap-3">
             <Button 
               onClick={handleDelete} 
-              color="failure" 
+              color="red" 
               size="lg"
               disabled={isDeleting}
               className="flex-1"
