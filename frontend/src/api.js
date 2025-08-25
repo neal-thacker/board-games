@@ -22,3 +22,12 @@ export function apiFetch(path, options) {
   
   return fetch(url, defaultOptions);
 }
+
+// Server info API
+export async function getServerInfo() {
+  const response = await apiFetch('/server-info');
+  if (!response.ok) {
+    throw new Error('Failed to fetch server info');
+  }
+  return response.json();
+}
