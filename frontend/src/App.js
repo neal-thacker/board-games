@@ -43,7 +43,7 @@ function App() {
           {/* Mobile Navigation */}
           <div className="md:hidden flex justify-between items-center py-4 px-2 sm:px-4">
             <div className="font-bold text-lg text-purple-700 flex items-center gap-2">
-              <span className="hidden sm:inline">Family Board Games</span>
+              <span className="inline">Family Board Games</span>
             </div>
             <button
               className="p-2 rounded focus:outline-none focus:ring-2 focus:ring-purple-400"
