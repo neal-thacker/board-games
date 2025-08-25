@@ -65,7 +65,7 @@ function TagEdit() {
   const hasChanges = name !== originalName;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="w-full mx-auto p-6">
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-6">
           <Link to="/tags">

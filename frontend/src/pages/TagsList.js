@@ -29,24 +29,16 @@ function TagsList() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="w-full mx-auto p-6">
       <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <HiTag className="w-6 h-6 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Tags Management</h1>
-              <p className="text-gray-600">Organize your board games with custom tags</p>
-            </div>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-blue-100 rounded-lg">
+            <HiTag className="w-6 h-6 text-blue-600" />
           </div>
-          <Link to="/tags/create">
-            <Button color="blue" size="lg">
-              <HiPlus className="w-4 h-4 mr-2" />
-              Add New Tag
-            </Button>
-          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Tags Management</h1>
+            <p className="text-gray-600">Organize your board games with custom tags</p>
+          </div>
         </div>
       </div>
 
@@ -54,9 +46,11 @@ function TagsList() {
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">All Tags</h2>
-            <span className="bg-gray-100 text-gray-800 text-sm font-medium px-3 py-1 rounded-full">
-              {tags.length} tag{tags.length !== 1 ? 's' : ''}
-            </span>
+            <Link to="/tags/create">
+            <Button color="blue" size="md">
+              <HiPlus className="w-4 h-4" />
+            </Button>
+          </Link>
           </div>
           
           {tags.length === 0 ? (
