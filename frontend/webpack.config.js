@@ -9,6 +9,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: isProduction ? '[name].[contenthash].js' : 'main.js',
+    publicPath: '/',
     clean: true,
   },
   experiments: {
