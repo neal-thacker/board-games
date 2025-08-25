@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Alert } from 'flowbite-react';
 import GameForm from './GameForm';
+import { apiFetch } from '../api';
 
 export default function GameCreate() {
   const navigate = useNavigate();
@@ -31,9 +33,19 @@ export default function GameCreate() {
   };
 
   return (
-    <main className="flex flex-1 flex-col items-center justify-center px-4 w-full max-w-7xl mx-auto">
-      <h2 className="text-2xl font-bold text-purple-700 mb-4">Add New Game</h2>
-      <GameForm onSubmit={handleCreate} onCancel={() => navigate('/library')} />
-    </main>
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-purple-800 mb-3">Add New Game</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Add a new board game to your collection. Fill in the details below to keep track of your games.
+          </p>
+        </div>
+
+        {/* Form Section */}
+        <GameForm onSubmit={handleCreate} onCancel={() => navigate('/library')} />
+      </div>
+    </div>
   );
 }
