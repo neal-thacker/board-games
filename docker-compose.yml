@@ -3,8 +3,8 @@ services:
     build:
       context: .
       args:
-        UID: ${DOCKER_UID}
-        GID: ${DOCKER_GID}
+        UID: ${DOCKER_UID:-1000}
+        GID: ${DOCKER_GID:-1000}
       dockerfile: docker/php/Dockerfile
     container_name: laravel-app
     ports:
