@@ -2,7 +2,17 @@
 set -e
 
 # Production build script for board games application
-echo "🚀 Building board games application for production..."
+# Usage: ./build-production.sh [--no-cache]
+
+# Check for --no-cache argument
+NO_CACHE_FLAG=""
+if [[ "$1" == "--no-cache" ]]; then
+    NO_CACHE_FLAG="--no-cache"
+    echo "🚀 Building board games application for production (no cache)..."
+else
+    echo "🚀 Building board games application for production..."
+    echo "💡 Tip: Use './build-production.sh --no-cache' to force rebuild without cache"
+fi
 
 # Load environment variables to get the API URL
 if [ -f .env.production.docker ]; then
@@ -30,8 +40,13 @@ echo "📦 Stopping existing containers..."
 docker compose --env-file .env.production.docker down
 
 # Use the production environment file with Raspberry Pi IP
-echo "🔨 Building fresh images with production configuration..."
-docker compose --env-file .env.production.docker build
+if [[ -n "$NO_CACHE_FLAG" ]]; then
+    echo "🔨 Building fresh images with production configuration (no cache)..."
+    docker compose --env-file .env.production.docker build --no-cache
+else
+    echo "🔨 Building images with production configuration..."
+    docker compose --env-file .env.production.docker build
+fi
 
 echo "🚀 Starting containers..."
 docker compose --env-file .env.production.docker up -d
