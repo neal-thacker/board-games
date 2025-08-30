@@ -2,28 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { Card } from 'flowbite-react';
 import { HiShare, HiGlobeAlt, HiDesktopComputer } from 'react-icons/hi';
 import QRCode from 'react-qr-code';
-import { getServerInfo } from '../api';
 
 function Share() {
-  const [serverInfo, setServerInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [shareUrl, setShareUrl] = useState('');
 
   useEffect(() => {
-    const fetchServerInfo = async () => {
+    const generateShareUrl = () => {
       try {
         setLoading(true);
-        const data = await getServerInfo();
-        setServerInfo(data);
         
-        // Create the share URL using the server IP and current port
-        const currentPort = window.location.port || '3000';
-        const url = `http://${data.ip}:${currentPort}`;
-        setShareUrl(url);
+        let baseUrl;
+        
+        if (process.env.NODE_ENV === 'production') {
+          // In production, use the current origin
+          baseUrl = window.location.origin;
+        } else {
+          // In development, extract the base URL from the API URL
+          const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+          // Remove '/api' from the end to get the base URL
+          baseUrl = apiBaseUrl.replace(/\/api$/, '');
+          
+          // Replace the backend port (8000) with frontend port (3000)
+          baseUrl = baseUrl.replace(':8000', ':3000');
+        }
+        
+        setShareUrl(baseUrl);
       } catch (err) {
-        setError('Failed to fetch server information');
-        console.error('Error fetching server info:', err);
+        setError('Failed to generate share URL');
+        console.error('Error generating share URL:', err);
         // Fallback to current URL
         setShareUrl(window.location.origin);
       } finally {
@@ -31,7 +39,7 @@ function Share() {
       }
     };
 
-    fetchServerInfo();
+    generateShareUrl();
   }, []);
 
   const copyToClipboard = async () => {
