@@ -38,10 +38,9 @@ docker compose --env-file .env.production.docker down
 # Build frontend locally first (since nginx serves from local dist folder)
 echo "🏗️  Building frontend locally..."
 cd frontend
-if [ ! -f package-lock.json ]; then
-    echo "📦 Installing frontend dependencies..."
-    npm install
-fi
+
+echo "📦 Installing frontend dependencies..."
+npm install
 
 # Set environment variables for frontend build
 export NODE_ENV=production
