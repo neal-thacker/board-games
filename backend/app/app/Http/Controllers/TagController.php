@@ -16,6 +16,11 @@ class TagController extends Controller
             $query->where('name', 'like', "%$search%");
         }
         
+        // If 'all' parameter is present, return all results without pagination
+        if ($request->boolean('all')) {
+            return $query->get();
+        }
+        
         $perPage = $request->input('per_page', 12);
         return $query->paginate($perPage);
     }

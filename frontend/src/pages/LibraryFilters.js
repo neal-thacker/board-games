@@ -27,7 +27,7 @@ function LibraryFilters({
     const loadTags = async () => {
       try {
         setLoadingTags(true);
-        const res = await apiFetch('/tags');
+        const res = await apiFetch('/tags?all=true');
         if (!res.ok) throw new Error('Failed to load tags');
         const tags = await res.json();
         setAvailableTags(Array.isArray(tags) ? tags : []);
