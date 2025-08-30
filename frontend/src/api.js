@@ -9,10 +9,6 @@ const API_BASE_URL = process.env.NODE_ENV === 'production'
 export function apiFetch(path, options) {
   // Ensure no double slashes
   const url = `${API_BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
-
-  localStorage.setItem('debug_api_url', url);
-  localStorage.setItem('debug_env', process.env.NODE_ENV);
-  localStorage.setItem('debug_api_base_url', API_BASE_URL);
   
   // Add default headers for JSON content
   const defaultOptions = {
