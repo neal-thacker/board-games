@@ -440,7 +440,7 @@ function LibraryFilters({
               }}
               color="light"
             >
-              Clear All
+              Clear
             </Button>
             <div className="flex space-x-3">
               <Button
