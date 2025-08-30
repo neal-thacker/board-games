@@ -11,6 +11,7 @@ import GameEdit from './pages/GameEdit';
 import TagCreate from './pages/TagCreate';
 import TagEdit from './pages/TagEdit';
 import TagDelete from './pages/TagDelete';
+import TagView from './pages/TagView';
 
 function App() {
   const [navOpen, setNavOpen] = useState(false);
@@ -79,6 +80,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/library" element={<Library />} />
               <Route path="/tags" element={<TagsList />} />
+              <Route path="/tags/:id" element={<TagView />} />
               <Route path="/share" element={<Share />} />
               <Route path="/tags/create" element={<TagCreate />} />
               <Route path="/tags/:id/edit" element={<TagEdit />} />

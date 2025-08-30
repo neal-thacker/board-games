@@ -9,12 +9,15 @@ class TagController extends Controller
 {
     public function index(Request $request)
     {
+        $query = Tag::query()->withCount('games');
+        
         if ($request->has('search')) {
             $search = $request->input('search');
-            return Tag::where('name', 'like', "%$search%")
-                ->get();
+            $query->where('name', 'like', "%$search%");
         }
-        return Tag::all();
+        
+        $perPage = $request->input('per_page', 12);
+        return $query->paginate($perPage);
     }
 
     public function store(Request $request)
@@ -27,7 +30,7 @@ class TagController extends Controller
 
     public function show(Tag $tag)
     {
-        return $tag;
+        return $tag->load('games');
     }
 
     public function update(Request $request, Tag $tag)
