@@ -37,8 +37,10 @@ docker compose --env-file .env.production.docker down
 
 # Use the production environment file with Raspberry Pi IP
 if [[ -n "$NO_CACHE_FLAG" ]]; then
-    echo "🔨 Building fresh images with production configuration (no cache)..."
-    docker compose --env-file .env.production.docker build --no-cache
+    echo "🔨 Building images with production configuration (frontend no cache)..."
+    docker compose --env-file .env.production.docker build
+    echo "🔨 Rebuilding frontend with no cache..."
+    docker compose --env-file .env.production.docker build --no-cache frontend
 else
     echo "🔨 Building images with production configuration..."
     docker compose --env-file .env.production.docker build
