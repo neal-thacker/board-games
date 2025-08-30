@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api';
-import { Card, Button, Spinner, Badge } from 'flowbite-react';
-import { HiArrowLeft, HiPencil, HiTrash, HiTag } from 'react-icons/hi';
+import { Card, Button, Spinner, Badge, TextInput } from 'flowbite-react';
+import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
 import GameCard from './GameCard';
 
 function TagView() {
@@ -11,6 +11,9 @@ function TagView() {
   const [tag, setTag] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingName, setEditingName] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     apiFetch(`/tags/${id}`)
@@ -45,6 +48,58 @@ function TagView() {
       } catch (err) {
         alert('Error deleting tag: ' + err.message);
       }
+    }
+  };
+
+  const handleEditClick = () => {
+    setEditingName(tag.name);
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    if (editingName.trim() === '') {
+      alert('Tag name cannot be empty');
+      return;
+    }
+
+    if (editingName.trim() === tag.name) {
+      setIsEditing(false);
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await apiFetch(`/tags/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: editingName.trim() }),
+      });
+
+      if (response.ok) {
+        const updatedTag = await response.json();
+        setTag(updatedTag);
+        setIsEditing(false);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update tag');
+      }
+    } catch (err) {
+      alert('Error updating tag: ' + err.message);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setEditingName(tag.name);
+    setIsEditing(false);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSave();
+    } else if (e.key === 'Escape') {
+      handleCancel();
     }
   };
 
@@ -100,23 +155,70 @@ function TagView() {
 
       <Card className="max-w-2xl mx-auto">
         <div className="text-center py-2">
-          <Badge color="indigo" size="lg" className="mb-6 inline-block rounded-lg text-lg">
-            {tag.name}
-          </Badge>
+          {isEditing ? (
+            <div className="mb-6">
+              <div className="flex flex-wrap max-w-md mx-auto">
+                <TextInput
+                  value={editingName}
+                  onChange={(e) => setEditingName(e.target.value)}
+                  onKeyDown={handleKeyPress}
+                  placeholder="Tag name"
+                  className="w-full"
+                  disabled={isSaving}
+                  autoFocus
+                />
+                <div className="flex items-center justify-end gap-4 w-full mt-2">
+                  <Button
+                    color="green"
+                    size="sm"
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="w-full max-w-sm"
+                  >
+                    {isSaving ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    ) : (
+                      <HiCheck className="w-4 h-4" />
+                    )}
+                  </Button>
+                  <Button
+                    color="light"
+                    size="sm"
+                    onClick={handleCancel}
+                    disabled={isSaving}
+                    className="w-full max-w-sm"
+                  >
+                    <HiX className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="mb-6">
+              <Badge color="indigo" size="lg" className="inline-block rounded-lg text-lg">
+                {tag.name}
+              </Badge>
+            </div>
+          )}
 
-          <div className="mt-4 flex gap-4 justify-center">
-            <Link to={`/tags/${tag.id}/edit`}>
-              <Button color="blue" size="md" className="w-auto">
+          {!isEditing && (
+            <div className="mt-4 flex gap-4 justify-center">
+              <Button
+                  color="blue"
+                  size="md"
+                  onClick={handleEditClick}
+                  className="w-auto"
+                >
                 <HiPencil className="w-5 h-5 mr-2" />
                 Edit
               </Button>
-            </Link>
             
-            <Button color="red" size="md" onClick={handleDelete} className="w-auto">
-              <HiTrash className="w-5 h-5 mr-2" />
-              Delete
-            </Button>
-          </div>
+              <Button color="red" size="md" onClick={handleDelete} className="w-auto">
+                <HiTrash className="w-5 h-5 mr-2" />
+                Delete
+              </Button>
+            </div>
+          )}
         </div>
         
         <div className="border-t border-gray-200 pt-6">

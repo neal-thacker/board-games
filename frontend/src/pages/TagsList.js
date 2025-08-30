@@ -106,7 +106,7 @@ function TagsList() {
             <Link to="/tags/create">
               <Button color="blue" size="md">
                 <HiPlus className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Create Tag</span>
+                <span className="hidden md:inline ml-2">Add</span>
               </Button>
             </Link>
           </div>
