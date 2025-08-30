@@ -14,24 +14,20 @@ else
     echo "💡 Tip: Use './build-production.sh --no-cache' to force rebuild without cache"
 fi
 
-# Load environment variables to get the API URL
+# Load environment variables (mainly for display purposes)
 if [ -f .env.production.docker ]; then
     source .env.production.docker
-    # Check if REACT_APP_API_BASE_URL is set
-    if [ -z "$REACT_APP_API_BASE_URL" ]; then
-        echo "❌ Error: REACT_APP_API_BASE_URL is not set in .env.production.docker!"
-        echo "Please edit .env.production.docker and set REACT_APP_API_BASE_URL to your server's IP address."
-        echo "Example: REACT_APP_API_BASE_URL=http://192.168.1.76:8000/api"
-        exit 1
+    # Extract the server URL from REACT_APP_API_BASE_URL (remove /api suffix and port if present)
+    if [ -n "$REACT_APP_API_BASE_URL" ]; then
+        SERVER_URL=$(echo $REACT_APP_API_BASE_URL | sed 's|/api$||' | sed 's|:8000$||')
+    else
+        SERVER_URL="http://your-server-ip"
     fi
-    # Extract the base URL without /api suffix for display
-    SERVER_URL=$(echo $REACT_APP_API_BASE_URL | sed 's|/api$||')
 else
     echo "❌ Error: .env.production.docker file not found!"
     echo "Please copy .env.production.docker.example to .env.production.docker and configure it."
     echo "Example commands:"
     echo "  cp .env.production.docker.example .env.production.docker"
-    echo "  # Then edit .env.production.docker and set REACT_APP_API_BASE_URL=http://192.168.1.76:8000/api"
     exit 1
 fi
 

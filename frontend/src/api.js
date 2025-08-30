@@ -1,8 +1,10 @@
 // Centralized API base URL for frontend
-// In development, use proxy to avoid CORS issues
-// In production, uses environment variable or defaults to relative path
+// In production, use relative path so nginx can proxy to backend
+// In development, use full URL to avoid CORS issues
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
+const API_BASE_URL = process.env.NODE_ENV === 'production' 
+  ? '/api'  // Use relative path in production (nginx will proxy)
+  : (process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api');
 
 export function apiFetch(path, options) {
   // Ensure no double slashes
