@@ -35,12 +35,30 @@ fi
 echo "📦 Stopping existing containers..."
 docker compose --env-file .env.production.docker down
 
+# Build frontend locally first (since nginx serves from local dist folder)
+echo "🏗️  Building frontend locally..."
+cd frontend
+if [ ! -f package-lock.json ]; then
+    echo "📦 Installing frontend dependencies..."
+    npm install
+fi
+
+# Set environment variables for frontend build
+export NODE_ENV=production
+if [ -f ../.env.production.docker ]; then
+    export $(grep REACT_APP_ ../.env.production.docker | xargs)
+fi
+
+# Build frontend
+npm run build
+cd ..
+
 # Use the production environment file with Raspberry Pi IP
 if [[ -n "$NO_CACHE_FLAG" ]]; then
-    echo "🔨 Building images with production configuration (frontend no cache)..."
-    docker compose --env-file .env.production.docker build
-    echo "🔨 Rebuilding frontend with no cache..."
-    docker compose --env-file .env.production.docker build --no-cache frontend
+    echo "🔨 Building images with production configuration (backend no cache)..."
+    docker compose --env-file .env.production.docker build --no-cache app
+    echo "🔨 Building other images..."
+    docker compose --env-file .env.production.docker build frontend nginx
 else
     echo "🔨 Building images with production configuration..."
     docker compose --env-file .env.production.docker build
