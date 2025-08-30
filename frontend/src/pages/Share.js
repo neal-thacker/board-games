@@ -44,11 +44,36 @@ function Share() {
 
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
-      // You could add a toast notification here
-      alert('URL copied to clipboard!');
+      // Check if the modern clipboard API is available
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('URL copied to clipboard!');
+      } else {
+        // Fallback method for environments without clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = shareUrl;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        
+        try {
+          const successful = document.execCommand('copy');
+          if (successful) {
+            alert('URL copied to clipboard!');
+          } else {
+            throw new Error('Copy command failed');
+          }
+        } finally {
+          document.body.removeChild(textArea);
+        }
+      }
     } catch (err) {
       console.error('Failed to copy to clipboard:', err);
+      // As a last resort, show the URL in a prompt for manual copying
+      prompt('Copy this URL manually:', shareUrl);
     }
   };
 
