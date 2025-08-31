@@ -10,17 +10,58 @@ export function apiFetch(path, options) {
   // Ensure no double slashes
   const url = `${API_BASE_URL}${path.startsWith('/') ? path : '/' + path}`;
   
-  // Add default headers for JSON content
+  // Get auth token from localStorage
+  const token = localStorage.getItem('authToken');
+  
+  // Add default headers for JSON content and auth
   const defaultOptions = {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      ...(token && { 'Authorization': `Bearer ${token}` }),
       ...options?.headers
     },
     ...options
   };
   
   return fetch(url, defaultOptions);
+}
+
+// Authentication API
+export async function loginAdmin(password) {
+  const response = await apiFetch('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ password })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Login failed');
+  }
+  
+  return response.json();
+}
+
+export async function continueAsGuest() {
+  const response = await apiFetch('/auth/guest', {
+    method: 'POST'
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to continue as guest');
+  }
+  
+  return response.json();
+}
+
+export async function verifyAuth() {
+  const response = await apiFetch('/auth/verify');
+  
+  if (!response.ok) {
+    return { success: false, role: 'guest' };
+  }
+  
+  return response.json();
 }
 
 // Server info API

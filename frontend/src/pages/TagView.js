@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api';
+import { Card, Badge, Button, Spinner, TextInput, Alert } from 'flowbite-react';
+import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext';
+import GameCard from './GameCard';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../api';
 import { Card, Button, Spinner, Badge, TextInput } from 'flowbite-react';
 import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
 import GameCard from './GameCard';
@@ -14,6 +20,7 @@ function TagView() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingName, setEditingName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     apiFetch(`/tags/${id}`)
@@ -201,7 +208,7 @@ function TagView() {
             </div>
           )}
 
-          {!isEditing && (
+          {!isEditing && isAdmin() && (
             <div className="mt-4 flex gap-4 justify-center">
               <Button
                   color="blue"
