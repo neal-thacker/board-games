@@ -73,7 +73,6 @@ function TagView() {
     try {
       const response = await apiFetch(`/tags/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editingName.trim() }),
       });
 

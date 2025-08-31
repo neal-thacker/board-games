@@ -32,7 +32,6 @@ export default function GameEdit() {
     const { tags, ...gameData } = updated;
     apiFetch(`/games/${id}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gameData),
     })
       .then(res => {
