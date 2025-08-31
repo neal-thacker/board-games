@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { apiFetch } from '../api';
 import { Link } from 'react-router-dom';
 import { Button, Spinner, TextInput, Card, Pagination } from 'flowbite-react';
@@ -14,6 +14,28 @@ function TagsList() {
   const [totalTags, setTotalTags] = useState(0);
   const [perPage] = useState(12);
   const { isAdmin } = useAuth();
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    debounce((searchTerm) => {
+      setCurrentPage(1);
+      fetchTags(1, searchTerm);
+    }, 300),
+    []
+  );
+
+  // Debounce utility function
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
   const fetchTags = async (page = 1, search = '') => {
     setLoading(true);
@@ -43,37 +65,29 @@ function TagsList() {
     fetchTags(currentPage, searchQuery);
   }, [currentPage]);
 
+  // Effect for debounced search when searchQuery changes
+  useEffect(() => {
+    if (searchQuery === '') {
+      setCurrentPage(1);
+      fetchTags(1, '');
+    } else {
+      debouncedSearch(searchQuery);
+    }
+  }, [searchQuery, debouncedSearch]);
+
   const handleSearch = (e) => {
     e.preventDefault();
-    setCurrentPage(1);
-    fetchTags(1, searchQuery);
+    // Form submission is now handled by the search input change
   };
 
   const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    
-    // If search is cleared, fetch all tags
-    if (value === '') {
-      setCurrentPage(1);
-      fetchTags(1, '');
-    }
   };
 
   const onPageChange = (page) => {
     setCurrentPage(page);
   };
-
-  if (loading && currentPage === 1) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-center">
-          <Spinner size="xl" />
-          <p className="mt-4 text-gray-600">Loading tags...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="w-full mx-auto">
@@ -122,7 +136,10 @@ function TagsList() {
         <div className="p-6">
           {loading ? (
             <div className="flex justify-center items-center py-12">
-              <Spinner size="lg" />
+              <div className="text-center">
+                <Spinner size="lg" />
+                <p className="mt-4 text-gray-600">Loading tags...</p>
+              </div>
             </div>
           ) : tags.length === 0 ? (
             <div className="text-center py-12">
