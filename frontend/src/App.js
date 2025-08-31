@@ -1,21 +1,3 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { HiMenu, HiHome, HiCollection, HiTag, HiShare, HiX, HiLogout, HiShieldCheck, HiUserGroup } from "react-icons/hi";
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import ProtectedRoute from './components/ProtectedRoute';
-import Auth from './pages/Auth';
-import Home from './pages/Home';
-import Library from './pages/Library';
-import TagsList from './pages/TagsList';
-import Share from './pages/Share';
-import GameCreate from './pages/GameCreate';
-import GameView from './pages/GameView';
-import GameEdit from './pages/GameEdit';
-import TagCreate from './pages/TagCreate';
-import TagEdit from './pages/TagEdit';
-import TagDelete from './pages/TagDelete';
-import TagView from './pages/TagView';
-
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';

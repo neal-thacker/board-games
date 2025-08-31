@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { apiFetch } from '../api';
-import { Card, Badge, Button, Spinner, TextInput, Alert } from 'flowbite-react';
 import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
 import { useAuth } from '../contexts/AuthContext';
-import GameCard from './GameCard';
-import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api';
 import { Card, Button, Spinner, Badge, TextInput } from 'flowbite-react';
-import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
 import GameCard from './GameCard';
 
 function TagView() {
