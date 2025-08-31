@@ -141,6 +141,8 @@ function Library() {
           </Button>
         )}
       </div>
+
+      <p className="text-gray-700">Browse all available board games here.</p>
       
       {/* Search and Filter Section */}
       <LibraryFilters
@@ -152,8 +154,6 @@ function Library() {
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
       />
-
-      <p className="text-lg text-gray-700">Browse all available board games here.</p>
       
       {/* Loading State */}
       {loading && (

@@ -252,16 +252,11 @@ function TagView() {
             ))}
           </div>
         ) : (
-          <Card className="max-w-md mx-auto">
+          <Card className="max-w-2xl mx-auto">
             <div className="text-center py-8">
               <HiTag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Games Yet</h3>
               <p className="text-gray-600 mb-4">This tag hasn't been assigned to any games yet.</p>
-              <Link to="/games/create">
-                <Button color="blue" size="sm">
-                  Add New Game
-                </Button>
-              </Link>
             </div>
           </Card>
         )}
