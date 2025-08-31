@@ -18,7 +18,6 @@ function TagCreate() {
     try {
       const res = await apiFetch('/tags', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
       if (!res.ok) {

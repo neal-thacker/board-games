@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { apiFetch } from '../api';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner, Pagination } from 'flowbite-react';
+import { useAuth } from '../contexts/AuthContext';
 import GameCard from './GameCard';
 import LibraryFilters from './LibraryFilters';
 
@@ -19,6 +20,7 @@ function Library() {
   const [minAge, setMinAge] = useState(null);
   const navigate = useNavigate();
   const searchTimeoutRef = useRef();
+  const { isAdmin } = useAuth();
 
   const loadGames = useCallback(async (page = 1) => {
     try {
@@ -130,13 +132,17 @@ function Library() {
       {/* Header */}
       <div className="flex w-full justify-between items-center mb-4">
         <h2 className="text-3xl font-bold text-purple-700">Library</h2>
-        <Button
-          color="purple"
-          onClick={() => navigate('/games/new')}
-        >
-          + Add Game
-        </Button>
+        {isAdmin() && (
+          <Button
+            color="purple"
+            onClick={() => navigate('/games/new')}
+          >
+            + Add Game
+          </Button>
+        )}
       </div>
+
+      <p className="text-gray-700">Browse all available board games here.</p>
       
       {/* Search and Filter Section */}
       <LibraryFilters
@@ -148,8 +154,6 @@ function Library() {
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
       />
-
-      <p className="text-lg text-gray-700">Browse all available board games here.</p>
       
       {/* Loading State */}
       {loading && (

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext';
 import { apiFetch } from '../api';
 import { Card, Button, Spinner, Badge, TextInput } from 'flowbite-react';
-import { HiArrowLeft, HiPencil, HiTrash, HiTag, HiCheck, HiX } from 'react-icons/hi';
 import GameCard from './GameCard';
 
 function TagView() {
@@ -14,6 +15,7 @@ function TagView() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingName, setEditingName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     apiFetch(`/tags/${id}`)
@@ -71,7 +73,6 @@ function TagView() {
     try {
       const response = await apiFetch(`/tags/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: editingName.trim() }),
       });
 
@@ -201,7 +202,7 @@ function TagView() {
             </div>
           )}
 
-          {!isEditing && (
+          {!isEditing && isAdmin() && (
             <div className="mt-4 flex gap-4 justify-center">
               <Button
                   color="blue"
@@ -251,16 +252,11 @@ function TagView() {
             ))}
           </div>
         ) : (
-          <Card className="max-w-md mx-auto">
+          <Card className="max-w-2xl mx-auto">
             <div className="text-center py-8">
               <HiTag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No Games Yet</h3>
               <p className="text-gray-600 mb-4">This tag hasn't been assigned to any games yet.</p>
-              <Link to="/games/create">
-                <Button color="blue" size="sm">
-                  Add New Game
-                </Button>
-              </Link>
             </div>
           </Card>
         )}

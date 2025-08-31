@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../api';
 import { Card, Badge, Button, Spinner, Alert } from 'flowbite-react';
 import { HiArrowLeft, HiPencil, HiTrash } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext';
 
 function GameView() {
   const { id } = useParams();
@@ -10,6 +11,7 @@ function GameView() {
   const [game, setGame] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAdmin } = useAuth();
 
   useEffect(() => {
     const loadGame = async () => {
@@ -104,17 +106,19 @@ function GameView() {
           Back to Library
         </Button>
         
-        {/* Action buttons */}
-        <div className="flex gap-3">
-          <Button onClick={handleEdit} color="purple" size="sm">
-            <HiPencil className="mr-2 h-4 w-4" />
-            Edit
-          </Button>
-          <Button onClick={handleDelete} color="light" size="sm">
-            <HiTrash className="mr-2 h-4 w-4" />
-            Delete
-          </Button>
-        </div>
+        {/* Action buttons - only show for admin users */}
+        {isAdmin() && (
+          <div className="flex gap-3">
+            <Button onClick={handleEdit} color="purple" size="sm">
+              <HiPencil className="mr-2 h-4 w-4" />
+              Edit
+            </Button>
+            <Button onClick={handleDelete} color="light" size="sm">
+              <HiTrash className="mr-2 h-4 w-4" />
+              Delete
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Game details card */}

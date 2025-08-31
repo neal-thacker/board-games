@@ -24,6 +24,7 @@ services:
       DB_DATABASE: laravel
       DB_USERNAME: root
       DB_PASSWORD: secret
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
 
     restart: on-failure
 

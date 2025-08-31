@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalBody, ModalHeader, ModalFooter, Button, TextInput, Badge } from 'flowbite-react';
 import { apiFetch } from '../api';
+import { HiXMark } from 'react-icons/hi2';
 
 function LibraryFilters({
   searchTerm,
@@ -150,18 +151,18 @@ function LibraryFilters({
   const hasActiveFilters = searchTerm.trim() || (Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null;
 
   return (
-    <div className="w-full max-w-4xl space-y-4">
+    <div className="w-full max-w-4xl">
       {/* Search Bar and Filter Controls */}
       <div className="flex flex-col sm:flex-row gap-4 items-center">
         {/* Search Bar */}
         <div className="relative flex-1 w-full">
           <TextInput
             type="text"
-            placeholder="Search games by name, description, or tags..."
+            placeholder="Search games by name or description..."
             value={searchTerm}
             onChange={onSearchChange}
             className="w-full"
-            sizing="lg"
+            sizing="md"
           />
           {searchTerm && (
             <button
@@ -181,7 +182,6 @@ function LibraryFilters({
             color={(Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null ? 'purple' : 'light'}
             className="flex items-center gap-2"
           >
-            <span>🔍</span>
             Filters
             {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null) && (
               <Badge color="purple" size="sm">
@@ -204,24 +204,19 @@ function LibraryFilters({
 
       {/* Active Filters Display */}
       {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null) && (
-        <div className="flex flex-wrap gap-2 justify-center">
+        <div className="flex flex-wrap gap-2 justify-center mt-6">
           {/* Tag filters */}
           {Array.isArray(selectedTagIds) && selectedTagIds.map(tagId => {
             const tag = availableTags.find(t => t.id === tagId);
             return tag ? (
-              <Badge
+              <div
                 key={tagId}
-                color="purple"
-                className="flex items-center gap-1"
+                onClick={() => removeTagFilter(tagId)}
+                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 cursor-pointer hover:bg-purple-200 whitespace-nowrap"
               >
-                {tag.name}
-                <button
-                  onClick={() => removeTagFilter(tagId)}
-                  className="ml-1 text-purple-600 hover:text-purple-800"
-                >
-                  ✕
-                </button>
-              </Badge>
+                <span>{tag.name}</span>
+                <HiXMark className="text-purple-600 hover:text-purple-800 w-3 h-3 flex-shrink-0" />
+              </div>
             ) : null;
           })}
           

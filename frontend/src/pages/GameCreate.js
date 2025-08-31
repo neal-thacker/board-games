@@ -12,7 +12,6 @@ export default function GameCreate() {
     const { tags, ...gameData } = game;
     apiFetch('/games', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(gameData),
     })
       .then(res => {

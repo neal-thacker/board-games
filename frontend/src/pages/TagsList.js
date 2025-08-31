@@ -3,6 +3,7 @@ import { apiFetch } from '../api';
 import { Link } from 'react-router-dom';
 import { Button, Spinner, TextInput, Card, Pagination } from 'flowbite-react';
 import { HiPlus, HiTag, HiSearch } from 'react-icons/hi';
+import { useAuth } from '../contexts/AuthContext';
 
 function TagsList() {
   const [tags, setTags] = useState([]);
@@ -12,6 +13,7 @@ function TagsList() {
   const [totalPages, setTotalPages] = useState(1);
   const [totalTags, setTotalTags] = useState(0);
   const [perPage] = useState(12);
+  const { isAdmin } = useAuth();
 
   const fetchTags = async (page = 1, search = '') => {
     setLoading(true);
@@ -103,12 +105,14 @@ function TagsList() {
               </div>
             </form>
 
-            <Link to="/tags/create">
-              <Button color="blue" size="md">
-                <HiPlus className="w-4 h-4" />
-                <span className="hidden md:inline ml-2">Add</span>
-              </Button>
-            </Link>
+            {isAdmin() && (
+              <Link to="/tags/create">
+                <Button color="blue" size="md">
+                  <HiPlus className="w-4 h-4" />
+                  <span className="hidden md:inline ml-2">Add</span>
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -132,7 +136,7 @@ function TagsList() {
                   : 'Get started by creating your first tag to organize your games.'
                 }
               </p>
-              {!searchQuery && (
+              {!searchQuery && isAdmin() && (
                 <Link to="/tags/create">
                   <Button color="blue">
                     <HiPlus className="w-4 h-4 mr-2" />
