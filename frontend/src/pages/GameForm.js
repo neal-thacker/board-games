@@ -24,7 +24,9 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
     apiFetch(`/tags?search=${encodeURIComponent(tagQuery)}`)
       .then(res => res.json())
       .then(data => {
-        setTagOptions(data.filter(tag => !tags.some(t => t.id === tag.id)));
+        // Handle paginated response - extract the data array
+        const tagsArray = Array.isArray(data) ? data : data.data || [];
+        setTagOptions(tagsArray.filter(tag => !tags.some(t => t.id === tag.id)));
         setTagSearchLoading(false);
       })
       .catch(err => {
