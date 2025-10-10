@@ -133,12 +133,14 @@ function GameView() {
 
           {/* Game statistics */}
           <div className="flex justify-center gap-4 flex-wrap">
-            {(game.player_min || game.player_max) && (
+            {game.player_min && (
               <Badge color="purple" size="lg" className="px-4 py-2">
                 <span className="text-sm font-medium">
-                  {game.player_min === game.player_max 
-                    ? `${game.player_min} ${game.player_min === 1 ? 'player' : 'players'}`
-                    : `${game.player_min || '?'}-${game.player_max || '?'} players`
+                  {game.player_max 
+                    ? (game.player_min === game.player_max 
+                        ? `${game.player_min} ${game.player_min === 1 ? 'player' : 'players'}`
+                        : `${game.player_min}-${game.player_max} players`)
+                    : `${game.player_min}+ players`
                   }
                 </span>
               </Badge>

@@ -37,11 +37,13 @@ function GameCard({ game }) {
           <div className="flex-none space-y-3">
             {/* Player count and play time */}
             <div className="flex justify-center gap-2 flex-wrap">
-              {(game.player_min || game.player_max) && (
+              {game.player_min && (
                 <Badge color="purple" size="sm">
-                  {game.player_min === game.player_max 
-                    ? `${game.player_min || '?'} ${(game.player_min || 1) === 1 ? 'player' : 'players'}`
-                    : `${game.player_min || '?'}-${game.player_max || '?'} players`
+                  {game.player_max 
+                    ? (game.player_min === game.player_max 
+                        ? `${game.player_min} ${game.player_min === 1 ? 'player' : 'players'}`
+                        : `${game.player_min}-${game.player_max} players`)
+                    : `${game.player_min}+ players`
                   }
                 </Badge>
               )}

@@ -76,10 +76,16 @@ class GameController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'player_min' => 'required|integer|min:1',
-            'player_max' => 'required|integer|min:1',
+            'player_max' => 'nullable|integer|min:1',
             'estimated_time' => 'required|integer|min:1',
             'min_age' => 'nullable|integer|min:0',
         ]);
+        
+        // Ensure player_max is null if not provided or empty
+        if (empty($validated['player_max'])) {
+            $validated['player_max'] = null;
+        }
+        
         $game = Game::create($validated);
         return Game::with('tags')->find($game->id);
     }
@@ -97,10 +103,16 @@ class GameController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'description' => 'nullable|string',
             'player_min' => 'sometimes|required|integer|min:1',
-            'player_max' => 'sometimes|required|integer|min:1',
+            'player_max' => 'nullable|integer|min:1',
             'estimated_time' => 'sometimes|required|integer|min:1',
             'min_age' => 'nullable|integer|min:0',
         ]);
+        
+        // Ensure player_max is null if not provided or empty
+        if (array_key_exists('player_max', $validated) && empty($validated['player_max'])) {
+            $validated['player_max'] = null;
+        }
+        
         $game->update($validated);
         return $game->load('tags');
     }
@@ -116,7 +128,7 @@ class GameController extends Controller
     public function playerStats()
     {
         $minPlayers = Game::min('player_min') ?: 1;
-        $maxPlayers = Game::max('player_max') ?: 10;
+        $maxPlayers = max(Game::max('player_max'), Game::max('player_min'));
         
         return response()->json([
             'min_players' => (int)$minPlayers,
