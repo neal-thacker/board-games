@@ -89,11 +89,16 @@ export default function GameForm({ initialData = {}, onSubmit, onCancel }) {
       return;
     }
 
+    let maxPlayersValue = playerMax;
+    if (maxPlayersValue && typeof maxPlayersValue === 'string' && maxPlayersValue.trim() === '') {
+      maxPlayersValue = null;
+    }
+
     onSubmit({
       name: name.trim(),
       description: description.trim(),
       player_min: playerMin ? parseInt(playerMin) : null,
-      player_max: playerMax && playerMax.trim() !== '' ? parseInt(playerMax) : null,
+      player_max: maxPlayersValue ? parseInt(maxPlayersValue) : null,
       estimated_time: estimatedTime ? parseInt(estimatedTime) : null,
       min_age: minAge ? parseInt(minAge) : null,
       tags,
