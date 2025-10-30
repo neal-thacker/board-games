@@ -16,6 +16,7 @@ class GameController extends Controller
         $tagIds = $request->get('tag_ids', []);
         $playerCount = $request->get('player_count');
         $minAge = $request->get('min_age');
+        $maxTime = $request->get('max_time');
 
         $query = Game::with('tags');
         
@@ -54,6 +55,10 @@ class GameController extends Controller
                 $q->whereNull('min_age')
                   ->orWhere('min_age', '<=', (int)$minAge);
             });
+        }
+
+        if ($maxTime !== null && $maxTime !== '') {
+            $query->where('estimated_time', '<=', (int) $maxTime);
         }
         
         $games = $query->orderBy('created_at', 'desc')
@@ -155,6 +160,7 @@ class GameController extends Controller
         $tagIds = $request->get('tag_ids', []);
         $playerCount = $request->get('player_count');
         $minAge = $request->get('min_age');
+        $maxTime = $request->get('max_time');
 
         $query = Game::with('tags');
         
@@ -193,6 +199,10 @@ class GameController extends Controller
                 $q->whereNull('min_age')
                   ->orWhere('min_age', '<=', (int)$minAge);
             });
+        }
+
+        if ($maxTime !== null && $maxTime !== '') {
+            $query->where('estimated_time', '<=', (int) $maxTime);
         }
 
         $game = $query->inRandomOrder()->first();

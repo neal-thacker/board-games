@@ -9,6 +9,7 @@ function LibraryFilters({
   selectedTagIds,
   playerCount,
   minAge,
+  maxTime,
   onFiltersChange,
   onClearFilters
 }) {
@@ -16,6 +17,7 @@ function LibraryFilters({
   const [tempSelectedTagIds, setTempSelectedTagIds] = useState([]);
   const [tempPlayerCount, setTempPlayerCount] = useState(null);
   const [tempMinAge, setTempMinAge] = useState(null);
+  const [tempMaxTime, setTempMaxTime] = useState(null);
   const [availableTags, setAvailableTags] = useState([]);
   const [loadingTags, setLoadingTags] = useState(true);
   const [playerStats, setPlayerStats] = useState({ min_players: 1, max_players: 10, suggested_default: 4 });
@@ -98,7 +100,8 @@ function LibraryFilters({
     onFiltersChange({
       selectedTagIds: tempSelectedTagIds,
       playerCount: tempPlayerCount,
-      minAge: tempMinAge
+      minAge: tempMinAge,
+      maxTime: tempMaxTime
     });
     setShowFilterModal(false);
   };
@@ -108,6 +111,7 @@ function LibraryFilters({
     setTempSelectedTagIds(selectedTagIds);
     setTempPlayerCount(playerCount);
     setTempMinAge(minAge);
+    setTempMaxTime(maxTime);
     setShowFilterModal(false);
   };
 
@@ -116,6 +120,7 @@ function LibraryFilters({
     setTempSelectedTagIds(selectedTagIds);
     setTempPlayerCount(playerCount);
     setTempMinAge(minAge);
+    setTempMaxTime(maxTime);
     setShowFilterModal(true);
   };
 
@@ -144,6 +149,16 @@ function LibraryFilters({
       selectedTagIds,
       playerCount,
       minAge: null
+    });
+  };
+
+  // Remove maximum time filter
+  const removeMaxTimeFilter = () => {
+    onFiltersChange({
+      selectedTagIds,
+      playerCount,
+      minAge,
+      maxTime: null
     });
   };
 
@@ -203,7 +218,7 @@ function LibraryFilters({
       </div>
 
       {/* Active Filters Display */}
-      {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null) && (
+      {((Array.isArray(selectedTagIds) && selectedTagIds.length > 0) || playerCount !== null || minAge !== null || maxTime !== null) && (
         <div className="flex flex-wrap gap-2 justify-center mt-6">
           {/* Tag filters */}
           {Array.isArray(selectedTagIds) && selectedTagIds.map(tagId => {
@@ -246,6 +261,22 @@ function LibraryFilters({
               <button
                 onClick={removeMinAgeFilter}
                 className="ml-1 text-yellow-600 hover:text-yellow-800"
+              >
+                ✕
+              </button>
+            </Badge>
+          )}
+
+          {/* Maximum time filter */}
+          {maxTime !== null && (
+            <Badge
+              color="green"
+              className="flex items-center gap-1"
+            >
+              Up to {maxTime} mins
+              <button
+                onClick={removeMaxTimeFilter}
+                className="ml-1 text-green-600 hover:text-green-800"
               >
                 ✕
               </button>
@@ -388,6 +419,75 @@ function LibraryFilters({
                           <div className="flex justify-between text-xs text-gray-500 mt-1">
                             <span>{ageStats.min_age}</span>
                             <span>{ageStats.max_age}</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Maximum Time Section */}
+            <div>
+              <h4 className="font-medium text-gray-700 mb-3">Maximum Play Time (minutes):</h4>
+              {loadingAgeStats ? (
+                <p className="text-gray-500">Loading time range...</p>
+              ) : (
+                <div className="space-y-4">
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>No maximum time</span>
+                    <span>{tempMaxTime !== null ? `Up to ${tempMaxTime} mins` : 'No filter'}</span>
+                  </div>
+                  
+                  {/* Maximum Time Slider */}
+                  <div className="relative">
+                    <div className="space-y-3">
+                      <div className="flex items-center space-x-3">
+                        <input
+                          type="checkbox"
+                          id="enable-time-filter"
+                          checked={tempMaxTime !== null}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTempMaxTime(60); // Default to 60 mins
+                            } else {
+                              setTempMaxTime(null);
+                            }
+                          }}
+                          className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                        />
+                        <label htmlFor="enable-time-filter" className="text-sm text-gray-700">
+                          Filter by maximum play time
+                        </label>
+                      </div>
+                      
+                      {tempMaxTime !== null && (
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-2">
+                            Show games that can be played in up to {tempMaxTime} minutes
+                          </label>
+                          <input
+                            type="range"
+                            min={15}
+                            max={240}
+                            step={15}
+                            value={tempMaxTime}
+                            onChange={(e) => setTempMaxTime(parseInt(e.target.value))}
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer 
+                                     focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50
+                                     [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:w-5 
+                                     [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-green-600 
+                                     [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-white 
+                                     [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer
+                                     [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:rounded-full 
+                                     [&::-moz-range-thumb]:bg-green-600 [&::-moz-range-thumb]:border-2 
+                                     [&::-moz-range-thumb]:border-white [&::-moz-range-thumb]:shadow-md 
+                                     [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:border-none"
+                          />
+                          <div className="flex justify-between text-xs text-gray-500 mt-1">
+                            <span>15 mins</span>
+                            <span>240 mins</span>
                           </div>
                         </div>
                       )}

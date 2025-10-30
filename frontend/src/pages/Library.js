@@ -18,6 +18,7 @@ function Library() {
   const [selectedTagIds, setSelectedTagIds] = useState([]);
   const [playerCount, setPlayerCount] = useState(null);
   const [minAge, setMinAge] = useState(null);
+  const [maxTime, setMaxTime] = useState(null);
   const navigate = useNavigate();
   const searchTimeoutRef = useRef();
   const { isAdmin } = useAuth();
@@ -51,6 +52,10 @@ function Library() {
       if (minAge !== null) {
         params.append('min_age', minAge.toString());
       }
+
+      if (maxTime !== null) {
+        params.append('max_time', maxTime.toString());
+      }
       
       const res = await apiFetch(`/games?${params.toString()}`);
       if (!res.ok) throw new Error('Network response was not ok');
@@ -72,7 +77,7 @@ function Library() {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm, selectedTagIds, playerCount, minAge, itemsPerPage]);
+  }, [searchTerm, selectedTagIds, playerCount, minAge, maxTime, itemsPerPage]);
 
   useEffect(() => {
     loadGames(1);
@@ -112,10 +117,11 @@ function Library() {
   };
 
   // Handle filter changes from LibraryFilters component
-  const handleFiltersChange = ({ selectedTagIds: newTagIds, playerCount: newPlayerCount, minAge: newMinAge }) => {
+  const handleFiltersChange = ({ selectedTagIds: newTagIds, playerCount: newPlayerCount, minAge: newMinAge, maxTime: newMaxTime }) => {
     setSelectedTagIds(newTagIds);
     setPlayerCount(newPlayerCount);
     setMinAge(newMinAge);
+    setMaxTime(newMaxTime);
   };
 
   // Clear all filters
@@ -151,6 +157,10 @@ function Library() {
       // Add minimum age filter if specified
       if (minAge !== null) {
         params.append('min_age', minAge.toString());
+      }
+
+      if (maxTime !== null) {
+        params.append('max_time', maxTime.toString());
       }
 
       const res = await apiFetch(`/games/random?${params.toString()}`);
@@ -191,6 +201,7 @@ function Library() {
         selectedTagIds={selectedTagIds}
         playerCount={playerCount}
         minAge={minAge}
+        maxTime={maxTime}
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
       />
