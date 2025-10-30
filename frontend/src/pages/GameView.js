@@ -101,7 +101,7 @@ function GameView() {
     <main className="flex flex-1 flex-col items-center w-full max-w-4xl mx-auto space-y-6">
       {/* Header with back button */}
       <div className="w-full flex items-center justify-between flex-wrap">
-        <Button onClick={handleBack} color="light" size="sm" className="mb-2">
+        <Button onClick={handleBack} color="light" size="sm">
           <HiArrowLeft className="mr-2 h-4 w-4" />
           Back to Library
         </Button>
