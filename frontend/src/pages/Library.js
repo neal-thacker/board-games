@@ -127,6 +127,46 @@ function Library() {
     setCurrentPage(1);
   };
 
+  const handleFetchRandomGame = async () => {
+    try {
+      setLoading(true);
+      // Build query parameters for filters
+      const params = new URLSearchParams();
+
+      if (searchTerm.trim()) {
+        params.append('search', searchTerm.trim());
+      }
+
+      if (selectedTagIds.length > 0) {
+        selectedTagIds.forEach(tagId => {
+          params.append('tag_ids[]', tagId.toString());
+        });
+      }
+
+      // Add player count filter if specified
+      if (playerCount !== null) {
+        params.append('player_count', playerCount.toString());
+      }
+
+      // Add minimum age filter if specified
+      if (minAge !== null) {
+        params.append('min_age', minAge.toString());
+      }
+
+      const res = await apiFetch(`/games/random?${params.toString()}`);
+      if (!res.ok) throw new Error('Network response was not ok');
+
+      const data = await res.json();
+      // Handle the random game data (e.g., navigate to the game details page)
+      navigate(`/games/${data.id}`);
+    } catch (err) {
+      console.error('Error fetching random game:', err);
+      // Handle error (e.g., show a notification)
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <main className="flex flex-1 flex-col items-center justify-center text-center w-full max-w-7xl mx-auto space-y-8 md:space-y-12 p-4">
       {/* Header */}
@@ -143,7 +183,7 @@ function Library() {
       </div>
 
       <p className="text-gray-700">Browse all available board games here.</p>
-      
+
       {/* Search and Filter Section */}
       <LibraryFilters
         searchTerm={searchTerm}
@@ -154,6 +194,16 @@ function Library() {
         onFiltersChange={handleFiltersChange}
         onClearFilters={handleClearFilters}
       />
+
+      {/* Random Game Button */}
+      <div className="mb-4">
+        <Button
+          color="purple"
+          onClick={handleFetchRandomGame}
+        >
+          Random Game Matching Filters
+        </Button>
+      </div>
       
       {/* Loading State */}
       {loading && (

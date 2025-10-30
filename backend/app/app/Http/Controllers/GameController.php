@@ -146,4 +146,57 @@ class GameController extends Controller
             'suggested_default' => 8
         ]);
     }
+
+    public function random(Request $request)
+    {
+        $perPage = $request->get('per_page', 12); // Default 12 games per page
+        $page = $request->get('page', 1);
+        $search = $request->get('search');
+        $tagIds = $request->get('tag_ids', []);
+        $playerCount = $request->get('player_count');
+        $minAge = $request->get('min_age');
+
+        $query = Game::with('tags');
+        
+        // Apply search filter
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%")
+                  ->orWhereHas('tags', function ($tagQuery) use ($search) {
+                      $tagQuery->where('name', 'like', "%{$search}%");
+                  });
+            });
+        }
+        
+        // Apply tag filter: must have ALL the tags provided
+        if (!empty($tagIds)) {
+            foreach ($tagIds as $tagId) {
+                $query->whereHas('tags', function ($tagQuery) use ($tagId) {
+                    $tagQuery->where('tags.id', $tagId);
+                });
+            }
+        }
+        
+        // Apply player count filter: check if the given player count falls within the game's range
+        if ($playerCount !== null && $playerCount !== '') {
+            $query->where('player_min', '<=', (int)$playerCount)
+              ->where(function ($q) use ($playerCount) {
+                    $q->whereNull('player_max')
+                    ->orWhere('player_max', '>=', (int)$playerCount);
+              });
+        }
+        
+        // Apply minimum age filter: game's min_age should be less than or equal to the specified age
+        if ($minAge !== null && $minAge !== '') {
+            $query->where(function ($q) use ($minAge) {
+                $q->whereNull('min_age')
+                  ->orWhere('min_age', '<=', (int)$minAge);
+            });
+        }
+
+        $game = $query->inRandomOrder()->first();
+
+        return response()->json($game ? $game->toArray() : null, 200);
+    }
 }

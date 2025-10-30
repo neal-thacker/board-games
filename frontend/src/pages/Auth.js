@@ -62,6 +62,28 @@ const Auth = () => {
         </div>
 
         <div className="space-y-6">
+          {/* Guest Access Card */}
+          <div className="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <HiUserGroup className="w-6 h-6 text-blue-600" />
+              <h3 className="text-lg font-medium text-gray-900">Guest Access</h3>
+            </div>
+            
+            <p className="text-sm text-gray-600 mb-4">
+              Browse games and tags in read-only mode
+            </p>
+
+            <Button
+              onClick={handleGuestAccess}
+              disabled={loading}
+              className="w-full"
+              color="blue"
+              outline
+            >
+              {loading ? 'Loading...' : 'Continue as Guest'}
+            </Button>
+          </div>
+
           {/* Admin Login Card */}
           <div className="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
             <div className="flex items-center space-x-3 mb-4">
@@ -107,28 +129,6 @@ const Auth = () => {
                 {loading ? 'Signing in...' : 'Sign in as Admin'}
               </Button>
             </form>
-          </div>
-
-          {/* Guest Access Card */}
-          <div className="bg-white shadow-lg rounded-lg border border-gray-200 p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <HiUserGroup className="w-6 h-6 text-blue-600" />
-              <h3 className="text-lg font-medium text-gray-900">Guest Access</h3>
-            </div>
-            
-            <p className="text-sm text-gray-600 mb-4">
-              Browse games and tags in read-only mode
-            </p>
-
-            <Button
-              onClick={handleGuestAccess}
-              disabled={loading}
-              className="w-full"
-              color="blue"
-              outline
-            >
-              {loading ? 'Loading...' : 'Continue as Guest'}
-            </Button>
           </div>
 
           {error && (

@@ -14,6 +14,7 @@ Route::get('auth/verify', [AuthController::class, 'verify']);
 
 // Public read-only routes
 Route::get('games', [GameController::class, 'index']);
+Route::get('games/random', [GameController::class, 'random']);
 Route::get('games/{game}', [GameController::class, 'show']);
 Route::get('games-player-stats', [GameController::class, 'playerStats']);
 Route::get('games-age-stats', [GameController::class, 'ageStats']);
