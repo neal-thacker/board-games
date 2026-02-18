@@ -11,3 +11,9 @@ frontend/.env.production
 backend/.env
 backend/.env.local
 backend/.env.production
+app/app/node_modules/*
+app/app/.env
+app/app/vendor/*
+app/app/bootstrap/cache/*
+app/app/database/*.sqlite
+app/app/storage/*
